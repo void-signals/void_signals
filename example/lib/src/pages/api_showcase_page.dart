@@ -622,7 +622,9 @@ class _BatchDemoState extends State<_BatchDemo> {
                 ),
           ),
           const SizedBox(height: 8),
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
               ElevatedButton(
                 onPressed: () {
@@ -632,7 +634,6 @@ class _BatchDemoState extends State<_BatchDemo> {
                 },
                 child: const Text('Without batch'),
               ),
-              const SizedBox(width: 8),
               ElevatedButton(
                 onPressed: () {
                   // With batch - effect runs once
@@ -643,7 +644,6 @@ class _BatchDemoState extends State<_BatchDemo> {
                 },
                 child: const Text('With batch'),
               ),
-              const Spacer(),
               IconButton(
                 onPressed: () {
                   effectCount.value = 0;
@@ -690,18 +690,18 @@ class _SignalListDemoState extends State<_SignalListDemo> {
                 ),
           ),
           const SizedBox(height: 8),
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
               ElevatedButton(
                 onPressed: () => items.add('Item ${items.length + 1}'),
                 child: const Text('Add'),
               ),
-              const SizedBox(width: 8),
               ElevatedButton(
                 onPressed: () => items.isNotEmpty ? items.removeLast() : null,
                 child: const Text('Remove Last'),
               ),
-              const SizedBox(width: 8),
               ElevatedButton(
                 onPressed: () => items.clear(),
                 child: const Text('Clear'),
@@ -906,13 +906,14 @@ class _ThrottledDemoState extends State<_ThrottledDemo> {
         children: [
           const Text('throttled() limits updates to once per duration (1s)'),
           const SizedBox(height: 12),
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
               ElevatedButton(
                 onPressed: () => clickCount.value++,
                 child: const Text('Click rapidly!'),
               ),
-              const Spacer(),
               Watch(
                 builder: (ctx, _) => Text('Immediate: ${clickCount.value}'),
               ),
@@ -1294,15 +1295,15 @@ class _SignalExtensionsDemoState extends State<_SignalExtensionsDemo> {
         children: [
           const Text('Extension methods for common operations'),
           const SizedBox(height: 12),
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
               Watch(builder: (ctx, _) => Text('Counter: ${counter.value}')),
-              const Spacer(),
               ElevatedButton(
                 onPressed: () => counter.increment(),
                 child: const Text('increment()'),
               ),
-              const SizedBox(width: 8),
               ElevatedButton(
                 onPressed: () => counter.decrement(),
                 child: const Text('decrement()'),
@@ -1354,7 +1355,9 @@ class _ModifyDemoState extends State<_ModifyDemo> {
                 ),
           ),
           const SizedBox(height: 8),
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
               ElevatedButton(
                 onPressed: () {
@@ -1363,7 +1366,6 @@ class _ModifyDemoState extends State<_ModifyDemo> {
                 },
                 child: const Text('Increment Age'),
               ),
-              const SizedBox(width: 8),
               ElevatedButton(
                 onPressed: () {
                   user.modify((u) => {...u, 'name': 'Jane'});
@@ -1424,18 +1426,18 @@ class _PeekUntrackDemoState extends State<_PeekUntrackDemo> {
         children: [
           const Text('peek() reads without tracking, untrack() runs untracked'),
           const SizedBox(height: 12),
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
               ElevatedButton(
                 onPressed: () => counter.value++,
                 child: const Text('counter++ (triggers)'),
               ),
-              const SizedBox(width: 8),
               ElevatedButton(
                 onPressed: () => other.value++,
                 child: const Text('other++ (no trigger)'),
               ),
-              const SizedBox(width: 8),
               IconButton(
                 onPressed: () => logs.value = [],
                 icon: const Icon(Icons.clear),
@@ -1520,18 +1522,18 @@ class _EffectScopeDemoState extends State<_EffectScopeDemo> {
         children: [
           const Text('effectScope() groups effects for batch cleanup'),
           const SizedBox(height: 12),
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
               ElevatedButton(
                 onPressed: _createScope,
                 child: const Text('Create Scope'),
               ),
-              const SizedBox(width: 8),
               ElevatedButton(
                 onPressed: () => counter.value++,
                 child: const Text('counter++'),
               ),
-              const SizedBox(width: 8),
               ElevatedButton(
                 onPressed: _stopScope,
                 child: const Text('Stop Scope'),
@@ -1639,7 +1641,9 @@ class _SignalSelectorDemoState extends State<_SignalSelectorDemo> {
             ],
           ),
           const SizedBox(height: 8),
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
               ElevatedButton(
                 onPressed: () {
@@ -1647,14 +1651,12 @@ class _SignalSelectorDemoState extends State<_SignalSelectorDemo> {
                 },
                 child: const Text('Change Name'),
               ),
-              const SizedBox(width: 8),
               ElevatedButton(
                 onPressed: () {
                   user.value = user.value.copyWith(age: user.value.age + 1);
                 },
                 child: const Text('Increment Age'),
               ),
-              const SizedBox(width: 8),
               ElevatedButton(
                 onPressed: () {
                   user.value = user.value.copyWith(email: 'new@email.com');
@@ -1757,13 +1759,14 @@ class _MoreExtensionsDemoState extends State<_MoreExtensionsDemo> {
           const SizedBox(height: 12),
           // List extensions
           Watch(builder: (ctx, _) => Text('List: ${list.value.join(", ")}')),
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
               ElevatedButton(
                 onPressed: () => list.add(list.value.length + 1),
                 child: const Text('add()'),
               ),
-              const SizedBox(width: 4),
               ElevatedButton(
                 onPressed:
                     () =>
@@ -1772,7 +1775,6 @@ class _MoreExtensionsDemoState extends State<_MoreExtensionsDemo> {
                             : null,
                 child: const Text('remove()'),
               ),
-              const SizedBox(width: 4),
               ElevatedButton(
                 onPressed: () => list.clear(),
                 child: const Text('clear()'),
@@ -1782,13 +1784,14 @@ class _MoreExtensionsDemoState extends State<_MoreExtensionsDemo> {
           const SizedBox(height: 8),
           // Map extensions
           Watch(builder: (ctx, _) => Text('Map: ${map.value}')),
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
               ElevatedButton(
                 onPressed: () => map.set('c', 3),
                 child: const Text('set("c", 3)'),
               ),
-              const SizedBox(width: 4),
               ElevatedButton(
                 onPressed: () => map.remove('c'),
                 child: const Text('remove("c")'),
@@ -1801,18 +1804,18 @@ class _MoreExtensionsDemoState extends State<_MoreExtensionsDemo> {
             builder:
                 (ctx, _) => Text('Nullable: ${nullable.value ?? "(null)"}'),
           ),
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
               ElevatedButton(
                 onPressed: () => nullable.value = 'Hello!',
                 child: const Text('Set value'),
               ),
-              const SizedBox(width: 4),
               ElevatedButton(
                 onPressed: () => nullable.clear(),
                 child: const Text('clear()'),
               ),
-              const SizedBox(width: 4),
               Text('orDefault: ${nullable.orDefault("default")}'),
             ],
           ),
@@ -2112,13 +2115,14 @@ class _DistinctUntilChangedDemoState extends State<_DistinctUntilChangedDemo> {
             ],
           ),
           const SizedBox(height: 8),
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
               ElevatedButton(
                 onPressed: () => source.value++,
                 child: const Text('Increment (new value)'),
               ),
-              const SizedBox(width: 8),
               ElevatedButton(
                 onPressed: () => source.value = source.value,
                 child: const Text('Set same (skipped)'),
@@ -2349,7 +2353,9 @@ class _FrameBatchScopeDemoState extends State<_FrameBatchScopeDemo> {
                 ),
           ),
           const SizedBox(height: 8),
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
               ElevatedButton(
                 onPressed: () {
@@ -2358,14 +2364,12 @@ class _FrameBatchScopeDemoState extends State<_FrameBatchScopeDemo> {
                 },
                 child: const Text('c1++'),
               ),
-              const SizedBox(width: 8),
               ElevatedButton(
                 onPressed: () {
                   queueUpdate(() => counter2.value++);
                 },
                 child: const Text('c2++'),
               ),
-              const SizedBox(width: 8),
               ElevatedButton(
                 onPressed: () {
                   // Both queued in same frame = single batch
