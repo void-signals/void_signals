@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: void_signals
+dependency_overrides:
+  void_signals:
+    path: ../void_signals

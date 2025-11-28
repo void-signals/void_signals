@@ -1,0 +1,46 @@
+name: pubdev_explorer
+description: A pub.dev explorer app showcasing void_signals with Material Design 3 Expressive.
+publish_to: 'none'
+
+version: 1.0.0
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Signals
+  void_signals:
+    path: ../packages/void_signals
+  void_signals_flutter:
+    path: ../packages/void_signals_flutter
+  void_signals_hooks:
+    path: ../packages/void_signals_hooks
+  
+  # Hooks
+  flutter_hooks: ^0.20.0
+  
+  # Pub API
+  pub_api_client: ^3.2.0
+  
+  # UI
+  cached_network_image: ^3.4.1
+  flutter_markdown: ^0.7.4+3
+  url_launcher: ^6.3.1
+  timeago: ^3.7.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  
+  # Custom lint for void_signals
+  custom_lint: ^0.8.1
+  void_signals_lint:
+    path: ../packages/void_signals_lint
+
+flutter:
+  uses-material-design: true

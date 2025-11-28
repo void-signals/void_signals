@@ -1,0 +1,29 @@
+name: void_signals_flutter
+description: Flutter bindings for void_signals - high-performance reactive state management
+version: 1.0.0
+homepage: https://github.com/void-signals/void_signals
+repository: https://github.com/void-signals/void_signals
+issue_tracker: https://github.com/void-signals/void_signals/issues
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  void_signals: ^1.0.0
+  meta: ^1.12.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  lints: ^4.0.0
+  test: ^1.24.0
+
+topics:
+  - flutter
+  - reactivity
+  - signals
+  - state-management
+  - performance

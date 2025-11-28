@@ -1,0 +1,5 @@
+name: void_signals_flutter
+issueTracker: https://github.com/void-signals/void_signals/issues
+version: 1.0.0
+materialIconCodePoint: '0xe7ac'
+requiresConnection: true

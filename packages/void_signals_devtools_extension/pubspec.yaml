@@ -1,0 +1,38 @@
+name: void_signals_devtools_extension
+description: >-
+  Production-grade DevTools extension for void_signals - comprehensive visualization, 
+  debugging, and real-time editing of reactive state with dependency graphs, 
+  timeline views, and performance statistics.
+version: 1.0.0
+homepage: https://github.com/void-signals/void_signals
+repository: https://github.com/void-signals/void_signals
+issue_tracker: https://github.com/void-signals/void_signals/issues
+publish_to: none
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  devtools_extensions: ^0.4.0
+  devtools_app_shared: ^0.4.0
+  vm_service: ^15.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+topics:
+  - devtools
+  - debugging
+  - signals
+  - void_signals
+  - state-management
+  - reactive
+  - flutter

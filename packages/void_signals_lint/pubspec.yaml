@@ -1,0 +1,33 @@
+name: void_signals_lint
+description: >-
+  Production-grade custom lint rules for void_signals - comprehensive static analysis 
+  to enforce best practices, catch common mistakes, and provide quick fixes for 
+  reactive state management patterns.
+version: 1.0.0
+homepage: https://github.com/void-signals/void_signals
+repository: https://github.com/void-signals/void_signals
+issue_tracker: https://github.com/void-signals/void_signals/issues
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  analyzer:
+  analyzer_plugin:
+  custom_lint_builder: ^0.8.1
+  collection:
+  path: ^1.9.0
+
+dev_dependencies:
+  lints:
+  test:
+  custom_lint: ^0.8.1
+
+topics:
+  - linter
+  - analyzer
+  - signals
+  - void_signals
+  - custom-lint
+  - static-analysis
+  - flutter

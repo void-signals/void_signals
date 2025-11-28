@@ -1,0 +1,50 @@
+name: void_signals
+description: High-performance signal reactivity library for Dart and Flutter, based on alien-signals
+
+repository: https://github.com/void-signals/void_signals
+
+packages:
+  - packages/**
+  
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.0.0'
+
+scripts:
+  analyze:
+    description: Analyze all packages
+    exec: dart analyze
+
+  test:
+    description: Run tests in all packages
+    exec: dart test
+
+  format:
+    description: Format all Dart code
+    exec: dart format .
+    
+  pub:get:
+    description: Get dependencies for all packages
+    exec: dart pub get
+    
+  pub:upgrade:
+    description: Upgrade dependencies for all packages
+    exec: dart pub upgrade
+    
+  benchmark:
+    description: Run benchmarks
+    packageFilters:
+      scope: void_signals
+    exec: dart run benchmark
+    
+  example:flutter:
+    description: Run Flutter example
+    packageFilters:
+      scope: void_signals_flutter
+    exec: flutter run --example
+
+ide:
+  intellij:
+    enabled: true
+    module_extensions:
+      - .dart_tool/package_config.json

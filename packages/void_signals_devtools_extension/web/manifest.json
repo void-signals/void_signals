@@ -1,0 +1,11 @@
+{
+    "name": "void_signals DevTools",
+    "short_name": "void_signals",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#0175C2",
+    "theme_color": "#0175C2",
+    "description": "DevTools extension for void_signals reactive state management",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false
+}
