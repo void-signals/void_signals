@@ -7,7 +7,8 @@ void main() {
   group('SearchConfig', () {
     test('should have correct default values', () {
       const config = SearchConfig();
-      expect(config.debounceDuration, equals(const Duration(milliseconds: 300)));
+      expect(
+          config.debounceDuration, equals(const Duration(milliseconds: 300)));
       expect(config.minQueryLength, equals(1));
       expect(config.enableCache, isTrue);
       expect(config.maxCacheSize, equals(50));
@@ -22,7 +23,8 @@ void main() {
         maxCacheSize: 100,
         trimQuery: false,
       );
-      expect(config.debounceDuration, equals(const Duration(milliseconds: 500)));
+      expect(
+          config.debounceDuration, equals(const Duration(milliseconds: 500)));
       expect(config.minQueryLength, equals(3));
       expect(config.enableCache, isFalse);
       expect(config.maxCacheSize, equals(100));
@@ -374,10 +376,10 @@ void main() {
       );
 
       search.query.value = '  test  ';
-      
+
       // Allow microtasks to run (for effect to trigger)
       await Future.delayed(Duration.zero);
-      
+
       // Wait for debounce + search to complete
       await completer.future.timeout(
         const Duration(milliseconds: 500),
@@ -404,10 +406,10 @@ void main() {
       );
 
       search.query.value = '  test  ';
-      
+
       // Allow microtasks to run (for effect to trigger)
       await Future.delayed(Duration.zero);
-      
+
       // Wait for debounce + search to complete
       await completer.future.timeout(
         const Duration(milliseconds: 500),
@@ -474,7 +476,8 @@ void main() {
       search.query.value = 'test';
       await search.fetchSuggestions();
 
-      expect(search.suggestions.value, equals(['Suggestion 1', 'Suggestion 2']));
+      expect(
+          search.suggestions.value, equals(['Suggestion 1', 'Suggestion 2']));
       search.dispose();
     });
 
@@ -852,7 +855,8 @@ void main() {
       final sort = SortSignal<Map<String, dynamic>>(
         source: source,
         comparators: {
-          'name': (a, b) => (a['name'] as String).compareTo(b['name'] as String),
+          'name': (a, b) =>
+              (a['name'] as String).compareTo(b['name'] as String),
           'age': (a, b) => (a['age'] as int).compareTo(b['age'] as int),
         },
       );

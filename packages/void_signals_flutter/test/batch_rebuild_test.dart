@@ -98,7 +98,8 @@ void main() {
       expect(find.text('1-hello'), findsOneWidget);
     });
 
-    testWidgets('without batch: rapid updates cause multiple rebuilds', (tester) async {
+    testWidgets('without batch: rapid updates cause multiple rebuilds',
+        (tester) async {
       final counter = signal(0);
       var buildCount = 0;
 

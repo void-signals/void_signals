@@ -130,8 +130,7 @@ void main() {
     });
 
     test('should compute showBackToTop based on threshold', () {
-      final controller =
-          SignalScrollController(showBackToTopThreshold: 100.0);
+      final controller = SignalScrollController(showBackToTopThreshold: 100.0);
       expect(controller.showBackToTop.value, isFalse);
       controller.dispose();
     });
@@ -222,8 +221,7 @@ void main() {
     });
 
     test('should handle viewport fraction', () {
-      final controller =
-          SignalPageController(viewportFraction: 0.8);
+      final controller = SignalPageController(viewportFraction: 0.8);
       expect(controller.controller.viewportFraction, equals(0.8));
       controller.dispose();
     });
@@ -331,8 +329,7 @@ void main() {
     });
 
     test('SignalScrollController should handle negative thresholds', () {
-      final controller =
-          SignalScrollController(showBackToTopThreshold: -100.0);
+      final controller = SignalScrollController(showBackToTopThreshold: -100.0);
       // Should always show back to top with negative threshold
       expect(controller.showBackToTop.value, isTrue);
       controller.dispose();
