@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-11-29T23:08:23.232927",
+  "timestamp": "2025-11-30T07:14:33.026673",
   "frameworks": [
     "alien_signals",
     "mobx",
@@ -11,388 +11,388 @@
   ],
   "results": {
     "1000x12 - 4 sources - dynamic (large, sum: pass, count: pass)": {
-      "preact_signals": {
-        "time": 3100000.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 1250000.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 3140000.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 205280.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 1120000.0,
+        "time": 256000.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 306080.0,
+        "time": 338290.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 1680000.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 3650000.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 1780000.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 3500000.0,
         "passed": true
       },
       "void_signals": {
-        "time": 216370.0,
+        "time": 259670.00000000003,
         "passed": true
       }
     },
     "1000x5 - 25 sources (wide dense, sum: pass, count: pass)": {
-      "preact_signals": {
-        "time": 2970000.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 2840000.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 2990000.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 351730.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 18690000.0,
+        "time": 415230.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 410360.0,
+        "time": 498920.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 21260000.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 3360000.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 3420000.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 3500000.0,
         "passed": true
       },
       "void_signals": {
-        "time": 356810.0,
+        "time": 389250.0,
         "passed": true
       }
     },
     "100x15 - 6 sources - dynamic (very dynamic, sum: pass, count: pass)": {
-      "preact_signals": {
-        "time": 336730.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 1240000.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 341430.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 178530.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 1360000.0,
+        "time": 229670.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 223340.0,
+        "time": 257480.00000000003,
+        "passed": true
+      },
+      "solidart": {
+        "time": 1760000.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 465490.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 1660000.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 478370.0,
         "passed": true
       },
       "void_signals": {
-        "time": 178490.0,
+        "time": 219650.0,
         "passed": true
       }
     },
     "10x10 - 6 sources - dynamic (dynamic, sum: pass, count: pass)": {
-      "preact_signals": {
-        "time": 176340.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 1140000.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 182890.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 119280.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 1200000.0,
+        "time": 155510.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 176120.0,
+        "time": 201910.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 1430000.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 291380.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 1480000.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 292320.0,
         "passed": true
       },
       "void_signals": {
-        "time": 121200.0,
+        "time": 139570.0,
         "passed": true
       }
     },
     "10x5 - 2 sources (simple, sum: pass, count: pass)": {
-      "preact_signals": {
-        "time": 348270.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 1340000.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 364650.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 155930.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 502630.0,
+        "time": 184580.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 207390.0,
+        "time": 250850.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 753070.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 507300.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 1900000.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 534250.0,
         "passed": true
       },
       "void_signals": {
-        "time": 159470.0,
+        "time": 163930.0,
         "passed": true
       }
     },
     "5x500 - 3 sources (deep, sum: pass, count: pass)": {
-      "preact_signals": {
-        "time": 148550.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 752970.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 142100.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 105720.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 324970.0,
+        "time": 151870.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 163200.0,
+        "time": 202630.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 492270.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 234550.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 1090000.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 216780.0,
         "passed": true
       },
       "void_signals": {
-        "time": 108380.0,
+        "time": 143420.0,
         "passed": true
       }
     },
     "avoidablePropagation (success)": {
-      "preact_signals": {
-        "time": 141400.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 1460000.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 158110.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 86440.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 286090.0,
+        "time": 132760.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 130360.00000000001,
+        "time": 176850.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 496510.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 207660.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 2470000.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 247760.0,
         "passed": true
       },
       "void_signals": {
-        "time": 87960.0,
+        "time": 119990.0,
         "passed": true
       }
     },
     "broadPropagation (success)": {
-      "preact_signals": {
-        "time": 303660.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 2570000.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 292890.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 159210.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 3800000.0,
+        "time": 242920.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 264810.0,
+        "time": 397170.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 4770000.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 463180.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 4210000.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 457110.0,
         "passed": true
       },
       "void_signals": {
-        "time": 157130.0,
+        "time": 216270.0,
         "passed": true
       }
     },
     "cellx1000 (first: pass, last: pass)": {
-      "preact_signals": {
-        "time": 5770.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 53060.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 6490.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 3760.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 14090.0,
+        "time": 5400.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 10150.0,
+        "time": 17820.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 20960.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 9700.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 66210.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 11790.0,
         "passed": true
       },
       "void_signals": {
-        "time": 3400.0,
+        "time": 5780.0,
         "passed": true
       }
     },
     "cellx2500 (first: pass, last: pass)": {
-      "preact_signals": {
-        "time": 17200.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 160370.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 15110.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 12220.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 41240.0,
+        "time": 20500.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 30450.0,
+        "time": 45680.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 52490.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 27230.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 255760.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 26270.0,
         "passed": true
       },
       "void_signals": {
-        "time": 9190.0,
+        "time": 18250.0,
         "passed": true
       }
     },
     "cellx5000 (first: pass, last: pass)": {
-      "preact_signals": {
-        "time": 51290.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 340760.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 55240.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 40400.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 148920.0,
+        "time": 54930.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 124120.0,
+        "time": 110710.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 252260.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 68890.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 551090.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 77230.0,
         "passed": true
       },
       "void_signals": {
-        "time": 31570.0,
+        "time": 57030.0,
         "passed": true
       }
     },
     "comp_0to1": {
-      "preact_signals": {
-        "time": 9560.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 14870.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 13250.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 33.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 13940.0,
+        "time": 30.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 33580.0,
+        "time": 50790.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 20890.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 16430.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 16190.000000000002,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 29110.0,
         "passed": true
       },
       "void_signals": {
-        "time": 33.0,
+        "time": 66.0,
         "passed": true
       }
     },
     "comp_1000to1": {
-      "preact_signals": {
-        "time": 3.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 11.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 2.0,
-        "passed": true
-      },
       "alien_signals": {
         "time": 0.0,
         "passed": true
       },
-      "solidart": {
-        "time": 11.0,
+      "state_beacon": {
+        "time": 38.0,
         "passed": true
       },
-      "state_beacon": {
-        "time": 28.0,
+      "solidart": {
+        "time": 13.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 13.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 21.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 6.0,
         "passed": true
       },
       "void_signals": {
@@ -401,669 +401,669 @@
       }
     },
     "comp_1to1": {
-      "preact_signals": {
-        "time": 8950.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 16990.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 8140.000000000001,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 1720.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 15140.0,
+        "time": 946.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 34580.0,
+        "time": 47780.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 23350.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 28260.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 41680.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 17520.0,
         "passed": true
       },
       "void_signals": {
-        "time": 5040.0,
+        "time": 882.0,
         "passed": true
       }
     },
     "comp_1to1000": {
-      "preact_signals": {
-        "time": 1990.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 11400.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 2510.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 38.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 10550.0,
+        "time": 65.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 27510.0,
+        "time": 36710.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 13800.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 2800.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 14450.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 4340.0,
         "passed": true
       },
       "void_signals": {
-        "time": 38.0,
+        "time": 42.0,
         "passed": true
       }
     },
     "comp_1to2": {
-      "preact_signals": {
-        "time": 10720.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 24000.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 11820.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 1110.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 19500.0,
+        "time": 439.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 32119.999999999996,
+        "time": 43000.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 35200.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 21400.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 20460.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 30260.0,
         "passed": true
       },
       "void_signals": {
-        "time": 1430.0,
+        "time": 649.0,
         "passed": true
       }
     },
     "comp_1to4": {
-      "preact_signals": {
-        "time": 11920.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 15840.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 13130.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 541.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 16700.0,
+        "time": 218.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 31670.0,
+        "time": 42750.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 20770.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 23330.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 28810.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 26770.0,
         "passed": true
       },
       "void_signals": {
-        "time": 414.0,
+        "time": 287.0,
         "passed": true
       }
     },
     "comp_1to8": {
-      "preact_signals": {
-        "time": 5060.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 15430.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 4000.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 205.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 16129.999999999998,
+        "time": 108.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 31700.0,
+        "time": 41610.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 24290.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 4070.0000000000005,
+        "passed": true
+      },
+      "mobx": {
+        "time": 23580.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 5760.0,
         "passed": true
       },
       "void_signals": {
-        "time": 206.0,
+        "time": 112.0,
         "passed": true
       }
     },
     "comp_2to1": {
-      "preact_signals": {
-        "time": 1910.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 31570.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 7040.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 2690.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 21230.0,
+        "time": 2270.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 18950.0,
+        "time": 26010.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 19370.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 8640.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 31740.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 12290.0,
         "passed": true
       },
       "void_signals": {
-        "time": 2570.0,
+        "time": 1760.0,
         "passed": true
       }
     },
     "comp_4to1": {
-      "preact_signals": {
-        "time": 7790.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 9150.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 2570.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 1660.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 7530.0,
+        "time": 824.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 13190.0,
+        "time": 18020.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 10150.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 14230.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 11560.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 1600.0,
         "passed": true
       },
       "void_signals": {
-        "time": 1660.0,
+        "time": 2370.0,
         "passed": true
       }
     },
     "create_signals": {
-      "preact_signals": {
-        "time": 5830.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 36600.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 12980.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 14100.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 32580.0,
+        "time": 30350.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 39220.0,
+        "time": 58380.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 52910.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 5180.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 61860.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 25000.0,
         "passed": true
       },
       "void_signals": {
-        "time": 13290.0,
+        "time": 23760.0,
         "passed": true
       }
     },
     "deepPropagation (success)": {
-      "preact_signals": {
-        "time": 143830.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 960510.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 137170.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 66880.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 166610.0,
+        "time": 78140.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 137070.0,
+        "time": 159990.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 267050.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 177940.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 1490000.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 173330.0,
         "passed": true
       },
       "void_signals": {
-        "time": 69890.0,
+        "time": 75140.0,
         "passed": true
       }
     },
     "diamond (success)": {
-      "preact_signals": {
-        "time": 214930.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 1470000.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 221300.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 127280.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 698870.0,
+        "time": 154720.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 172540.0,
+        "time": 220670.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 995150.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 288430.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 2300000.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 307810.0,
         "passed": true
       },
       "void_signals": {
-        "time": 127120.0,
+        "time": 129280.0,
         "passed": true
       }
     },
     "molBench": {
-      "preact_signals": {
-        "time": 345740.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 412570.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 349140.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 342140.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 369550.0,
+        "time": 486320.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 803420.0,
+        "time": 1140000.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 521250.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 493370.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 574630.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 487550.0,
         "passed": true
       },
       "void_signals": {
-        "time": 343110.0,
+        "time": 474350.0,
         "passed": true
       }
     },
     "mux (success)": {
-      "preact_signals": {
-        "time": 293670.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 1210000.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 288980.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 248830.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 5280000.0,
+        "time": 291690.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 302810.0,
+        "time": 371000.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 5950000.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 388460.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 1750000.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 379850.0,
         "passed": true
       },
       "void_signals": {
-        "time": 253580.0,
+        "time": 293240.0,
         "passed": true
       }
     },
     "repeatedObservers (success)": {
-      "preact_signals": {
-        "time": 27640.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 155540.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 36300.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 22700.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 136250.0,
+        "time": 32950.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 61670.0,
+        "time": 59140.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 198490.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 39760.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 223400.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 51330.0,
         "passed": true
       },
       "void_signals": {
-        "time": 20200.0,
+        "time": 21340.0,
         "passed": true
       }
     },
     "triangle (success)": {
-      "preact_signals": {
-        "time": 78940.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 500300.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 78670.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 49740.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 178640.0,
+        "time": 63400.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 66040.0,
+        "time": 88440.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 250350.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 105290.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 728270.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 108550.0,
         "passed": true
       },
       "void_signals": {
-        "time": 51200.0,
+        "time": 58960.0,
         "passed": true
       }
     },
     "unstable (success)": {
-      "preact_signals": {
-        "time": 46570.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 222620.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 57890.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 35030.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 224000.0,
+        "time": 49750.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 273740.0,
+        "time": 343860.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 332370.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 70120.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 325920.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 80640.0,
         "passed": true
       },
       "void_signals": {
-        "time": 28520.0,
+        "time": 38770.0,
         "passed": true
       }
     },
     "update_1000to1": {
-      "preact_signals": {
-        "time": 14.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 35.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 39.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 6.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 46.0,
+        "time": 27.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 10.0,
+        "time": 16.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 94.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 20.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 57.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 65.0,
         "passed": true
       },
       "void_signals": {
-        "time": 6.0,
+        "time": 8.0,
         "passed": true
       }
     },
     "update_1to1": {
-      "preact_signals": {
-        "time": 5660.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 13890.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 15440.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 2690.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 19010.0,
+        "time": 11000.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 4260.0,
+        "time": 6650.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 38040.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 8150.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 21190.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 26680.0,
         "passed": true
       },
       "void_signals": {
-        "time": 2430.0,
+        "time": 18720.0,
         "passed": true
       }
     },
     "update_1to1000": {
-      "preact_signals": {
-        "time": 19.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 171.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 29.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 3.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 116.0,
+        "time": 10.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 281.0,
+        "time": 377.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 152.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 30.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 149.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 52.0,
         "passed": true
       },
       "void_signals": {
-        "time": 2.0,
+        "time": 8.0,
         "passed": true
       }
     },
     "update_1to2": {
-      "preact_signals": {
-        "time": 2870.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 7130.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 7760.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 2200.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 9550.0,
+        "time": 4040.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 2100.0,
+        "time": 3310.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 19590.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 4220.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 10440.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 13450.0,
         "passed": true
       },
       "void_signals": {
-        "time": 3110.0,
+        "time": 4480.0,
         "passed": true
       }
     },
     "update_1to4": {
-      "preact_signals": {
-        "time": 1350.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 3990.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 3780.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 682.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 4810.0,
+        "time": 2770.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 1090.0,
+        "time": 1640.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 9530.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 2070.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 5410.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 6610.0,
         "passed": true
       },
       "void_signals": {
-        "time": 606.0,
+        "time": 901.0,
         "passed": true
       }
     },
     "update_2to1": {
-      "preact_signals": {
-        "time": 2840.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 7030.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 7670.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 1280.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 9640.0,
+        "time": 5580.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 2110.0,
+        "time": 3310.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 18980.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 4160.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 10640.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 13310.0,
         "passed": true
       },
       "void_signals": {
-        "time": 1220.0,
+        "time": 1960.0,
         "passed": true
       }
     },
     "update_4to1": {
-      "preact_signals": {
-        "time": 1400.0,
-        "passed": true
-      },
-      "mobx": {
-        "time": 3400.0,
-        "passed": true
-      },
-      "signals_core": {
-        "time": 3820.0,
-        "passed": true
-      },
       "alien_signals": {
-        "time": 651.0,
-        "passed": true
-      },
-      "solidart": {
-        "time": 4800.0,
+        "time": 2750.0,
         "passed": true
       },
       "state_beacon": {
-        "time": 1060.0,
+        "time": 1660.0,
+        "passed": true
+      },
+      "solidart": {
+        "time": 9580.0,
+        "passed": true
+      },
+      "preact_signals": {
+        "time": 2110.0,
+        "passed": true
+      },
+      "mobx": {
+        "time": 5150.0,
+        "passed": true
+      },
+      "signals_core": {
+        "time": 6750.0,
         "passed": true
       },
       "void_signals": {
-        "time": 610.0,
+        "time": 2450.0,
         "passed": true
       }
     }
   },
   "summary": {
     "alien_signals": {
-      "wins": 18,
+      "wins": 10,
       "total": 35,
       "passed": 35
     },
@@ -1073,7 +1073,7 @@
       "passed": 35
     },
     "preact_signals": {
-      "wins": 2,
+      "wins": 1,
       "total": 35,
       "passed": 35
     },
@@ -1088,12 +1088,12 @@
       "passed": 35
     },
     "state_beacon": {
-      "wins": 1,
+      "wins": 3,
       "total": 35,
       "passed": 35
     },
     "void_signals": {
-      "wins": 19,
+      "wins": 22,
       "total": 35,
       "passed": 35
     }
