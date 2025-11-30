@@ -505,7 +505,8 @@ class AsyncSignal<T> {
       return _pendingOperation!.future;
     }
 
-    _pendingOperation = Completer<T>();
+    final completer = Completer<T>();
+    _pendingOperation = completer;
 
     // Set state based on whether we have existing data
     if (_value.value != null) {
@@ -524,17 +525,18 @@ class AsyncSignal<T> {
       _error.value = null;
       _stackTrace.value = null;
       _state.value = AsyncState.data;
-      _pendingOperation!.complete(result);
-      return result;
+      completer.complete(result);
     } catch (e, stack) {
       _error.value = e;
       _stackTrace.value = stack;
       _state.value = AsyncState.error;
-      _pendingOperation!.completeError(e, stack);
-      rethrow;
+      completer.completeError(e, stack);
     } finally {
       _pendingOperation = null;
     }
+
+    // Return the completer's future so errors are properly propagated
+    return completer.future;
   }
 
   /// Sets the value directly.

@@ -71,3 +71,19 @@ export 'src/collection_hooks.dart'
 // Utility hooks
 export 'src/utility_hooks.dart'
     show useDebounced, useThrottled, useCombine2, useCombine3, usePrevious;
+
+// Async hooks
+export 'src/async_hooks.dart'
+    show
+        AsyncStatus,
+        UseAsyncState,
+        UseAsyncController,
+        ValueRef,
+        useAsync,
+        useAsyncData,
+        useLatest,
+        useListener,
+        useToggle,
+        useCounter,
+        useInterval,
+        useTimeout;

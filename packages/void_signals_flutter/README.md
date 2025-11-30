@@ -1,11 +1,23 @@
-# void_signals_flutter
+<p align="center">
+  <img src="https://raw.githubusercontent.com/void-signals/void-signals/main/art/void.png" alt="void_signals logo" width="180" />
+</p>
 
-Flutter bindings for [void_signals](https://pub.dev/packages/void_signals) - a high-performance reactive state management solution.
+<h1 align="center">void_signals_flutter</h1>
 
-[![Pub Version](https://img.shields.io/pub/v/void_signals_flutter)](https://pub.dev/packages/void_signals_flutter)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+<p align="center">
+  Flutter bindings for <a href="https://pub.dev/packages/void_signals">void_signals</a> - a high-performance reactive state management solution.
+</p>
 
-English | [简体中文](README_CN.md)
+<p align="center">
+  <a href="https://pub.dev/packages/void_signals_flutter"><img src="https://img.shields.io/pub/v/void_signals_flutter" alt="Pub Version" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT" /></a>
+</p>
+
+<p align="center">
+  English | <a href="README_CN.md">简体中文</a>
+</p>
+
+---
 
 ## Why void_signals?
 
@@ -572,6 +584,235 @@ The `Watch` widget is recommended for most use cases due to simpler API.
 | `batch(() => ...)` | Group multiple updates |
 | `signal.peek()` | Read without tracking |
 | `untrack(() => ...)` | Run code without tracking |
+
+## Flutter Utilities
+
+### 🎮 Controller Signals
+
+Reactive wrappers for common Flutter controllers:
+
+```dart
+// TextEditingController
+final nameInput = SignalTextController();
+TextField(controller: nameInput.controller);
+Watch(builder: (_, __) => Text('Hello, ${nameInput.text.value}!'));
+
+// ScrollController with scroll position tracking
+final scroll = SignalScrollController();
+ListView(controller: scroll.controller, ...);
+Watch(builder: (_, __) {
+  if (scroll.showBackToTop.value) {
+    return FloatingActionButton(
+      onPressed: scroll.animateToTop,
+      child: Icon(Icons.arrow_upward),
+    );
+  }
+  return SizedBox.shrink();
+});
+
+// PageController
+final pages = SignalPageController();
+PageView(controller: pages.controller, ...);
+Watch(builder: (_, __) => Text('Page ${pages.currentPage.value + 1}'));
+
+// FocusNode
+final focus = SignalFocusNode();
+TextField(focusNode: focus.focusNode);
+Watch(builder: (_, __) => Container(
+  decoration: BoxDecoration(
+    border: Border.all(color: focus.hasFocus.value ? Colors.blue : Colors.grey),
+  ),
+));
+```
+
+### 📄 Pagination & Infinite Scroll
+
+```dart
+// Create paginated data source
+final items = PaginatedSignal<Item>(
+  loader: (page, pageSize) async {
+    final response = await api.getItems(page: page, limit: pageSize);
+    return PaginationResult(
+      items: response.items,
+      hasMore: response.hasMore,
+    );
+  },
+);
+
+// Load initial data
+await items.loadFirst();
+
+// Use the InfiniteScrollList widget
+InfiniteScrollList<Item>(
+  paginatedSignal: items,
+  itemBuilder: (context, item, index) => ItemTile(item: item),
+  loadingBuilder: (context) => CircularProgressIndicator(),
+  emptyBuilder: (context) => Text('No items'),
+  errorBuilder: (context, error, retry) => ElevatedButton(
+    onPressed: retry,
+    child: Text('Retry'),
+  ),
+)
+
+// Or manually with RefreshIndicator
+RefreshIndicator(
+  onRefresh: items.refresh,
+  child: ListView.builder(
+    itemCount: items.items.value.length,
+    itemBuilder: (context, index) {
+      // Trigger load more near the end
+      if (index == items.items.value.length - 5) {
+        items.loadMore();
+      }
+      return ItemTile(item: items.items.value[index]);
+    },
+  ),
+)
+```
+
+### ⏱️ Lifecycle & Timer Signals
+
+```dart
+// App lifecycle tracking
+final lifecycle = appLifecycleSignal();
+effect(() {
+  if (lifecycle.isPaused) saveState();
+  if (lifecycle.isResumed) refreshData();
+});
+
+// Interval timer
+final seconds = intervalSignal(Duration(seconds: 1));
+Watch(builder: (_, __) => Text('Elapsed: ${seconds.value}s'));
+
+// Countdown timer
+final countdown = countdownSignal(
+  Duration(minutes: 5),
+  onFinished: () => showAlert('Time is up!'),
+);
+countdown.start();
+Watch(builder: (_, __) {
+  final remaining = countdown.remaining.value;
+  return Text('${remaining.inMinutes}:${(remaining.inSeconds % 60).toString().padLeft(2, '0')}');
+});
+
+// Stopwatch
+final stopwatch = stopwatchSignal();
+stopwatch.start();
+Watch(builder: (_, __) => Text('${stopwatch.elapsed.value.inSeconds}s'));
+
+// Clock
+final clock = clockSignal();
+Watch(builder: (_, __) => Text('${clock.now.value.hour}:${clock.now.value.minute}'));
+```
+
+### ↩️ Undo/Redo History
+
+```dart
+// Create undoable signal
+final text = UndoableSignal<String>('');
+
+text.value = 'Hello';
+text.value = 'Hello World';
+text.value = 'Hello World!';
+
+text.undo();  // 'Hello World'
+text.undo();  // 'Hello'
+text.redo();  // 'Hello World'
+
+// UI controls
+Watch(builder: (_, __) => Row(children: [
+  IconButton(
+    onPressed: text.canUndo.value ? text.undo : null,
+    icon: Icon(Icons.undo),
+  ),
+  IconButton(
+    onPressed: text.canRedo.value ? text.redo : null,
+    icon: Icon(Icons.redo),
+  ),
+]));
+
+// Saveable signal with dirty tracking
+final document = SaveableSignal<String>('');
+document.value = 'Modified content';
+if (document.hasUnsavedChanges.value) {
+  // Show save prompt
+}
+document.markSaved();
+
+// Checkpoints
+final checkpoint = document.checkpoint();
+// ... make changes ...
+document.restore(checkpoint);  // Restore to checkpoint
+```
+
+### 🔍 Search & Filter
+
+```dart
+// Comprehensive search signal with debouncing and caching
+final search = SearchSignal<User>(
+  searcher: (query) => api.searchUsers(query),
+  config: SearchConfig(
+    debounceDuration: Duration(milliseconds: 300),
+    minQueryLength: 2,
+    enableCache: true,
+  ),
+);
+
+// Connect to TextField
+TextField(
+  onChanged: (value) => search.query.value = value,
+  decoration: InputDecoration(
+    suffixIcon: Watch(builder: (_, __) {
+      if (search.isSearching.value) return CircularProgressIndicator();
+      return Icon(Icons.search);
+    }),
+  ),
+);
+
+// Display results
+Watch(builder: (_, __) {
+  switch (search.state.value) {
+    case SearchState.idle:
+      return Text('Enter a search query');
+    case SearchState.searching:
+      return CircularProgressIndicator();
+    case SearchState.empty:
+      return Text('No results found');
+    case SearchState.error:
+      return Text('Error: ${search.error.value}');
+    case SearchState.results:
+      return ListView(children: search.results.value.map((u) => UserTile(u)).toList());
+  }
+});
+
+// Filter signal
+final filter = FilterSignal<Product>(
+  source: products,
+  filters: {
+    'inStock': (p) => p.inStock,
+    'onSale': (p) => p.onSale,
+    'premium': (p) => p.isPremium,
+  },
+);
+
+filter.toggle('inStock');
+Watch(builder: (_, __) => ListView(
+  children: filter.filtered.value.map((p) => ProductTile(p)).toList(),
+));
+
+// Sort signal
+final sort = SortSignal<Product>(
+  source: products,
+  comparators: {
+    'name': (a, b) => a.name.compareTo(b.name),
+    'price': (a, b) => a.price.compareTo(b.price),
+    'rating': (a, b) => b.rating.compareTo(a.rating),
+  },
+);
+
+sort.sortBy('price');
+sort.toggleDirection();  // Ascending <-> Descending
+```
 
 ## DevTools Extension
 

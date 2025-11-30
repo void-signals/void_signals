@@ -1,25 +1,25 @@
 import 'flags.dart';
 import 'nodes.dart';
 
-/// Global state for the reactive system.
-/// Using top-level variables for direct access (faster than class properties).
+// ============================================================================
+// GLOBAL STATE
+// ============================================================================
+
 int _cycle = 0;
 int _batchDepth = 0;
-int _notifyIndex = 0;
-int _queuedLength = 0;
 ReactiveNode? _activeSub;
+EffectNode? _queuedEffects;
+EffectNode? _queuedEffectsTail;
 
-/// Queue for pending effects - uses fixed list for better performance
-final List<EffectNode?> _queued =
-    List<EffectNode?>.filled(1024, null, growable: true);
+// ============================================================================
+// SUBSCRIBER MANAGEMENT
+// ============================================================================
 
-/// Gets the currently active subscriber.
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
 ReactiveNode? getActiveSub() => _activeSub;
 
-/// Sets the active subscriber and returns the previous one.
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
@@ -29,44 +29,40 @@ ReactiveNode? setActiveSub(ReactiveNode? sub) {
   return prevSub;
 }
 
-/// Gets the current batch depth.
+// ============================================================================
+// BATCH MANAGEMENT
+// ============================================================================
+
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
 int getBatchDepth() => _batchDepth;
 
-/// Starts a new batch operation.
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
-void startBatch() {
-  ++_batchDepth;
-}
+void startBatch() => ++_batchDepth;
 
-/// Ends a batch operation and flushes if this was the outermost batch.
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
 void endBatch() {
-  if (--_batchDepth == 0) {
-    flush();
-  }
+  if (--_batchDepth == 0) flush();
 }
 
-/// Links a dependency to a subscriber.
+// ============================================================================
+// LINK MANAGEMENT
+// ============================================================================
+
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
-@pragma('vm:align-loops')
 void link(ReactiveNode dep, ReactiveNode sub, int version) {
   final prevDep = sub.depsTail;
-
-  // Fast path: same dependency as last access
   if (prevDep != null && identical(prevDep.dep, dep)) {
     return;
   }
 
-  // Check next dependency (common pattern in loops)
   final nextDep = prevDep != null ? prevDep.nextDep : sub.deps;
   if (nextDep != null && identical(nextDep.dep, dep)) {
     nextDep.version = version;
@@ -74,7 +70,6 @@ void link(ReactiveNode dep, ReactiveNode sub, int version) {
     return;
   }
 
-  // Check if already linked in current tracking
   final prevSub = dep.subsTail;
   if (prevSub != null &&
       prevSub.version == version &&
@@ -82,19 +77,11 @@ void link(ReactiveNode dep, ReactiveNode sub, int version) {
     return;
   }
 
-  // Create new link
-  final newLink = Link(
-    dep: dep,
-    sub: sub,
-    version: version,
-    prevDep: prevDep,
-    nextDep: nextDep,
-    prevSub: prevSub,
-  );
+  final newLink = sub.depsTail = dep.subsTail = Link(dep, sub, version)
+    ..prevDep = prevDep
+    ..nextDep = nextDep
+    ..prevSub = prevSub;
 
-  sub.depsTail = dep.subsTail = newLink;
-
-  // Update pointers
   if (nextDep != null) {
     nextDep.prevDep = newLink;
   }
@@ -103,7 +90,6 @@ void link(ReactiveNode dep, ReactiveNode sub, int version) {
   } else {
     sub.deps = newLink;
   }
-
   if (prevSub != null) {
     prevSub.nextSub = newLink;
   } else {
@@ -111,13 +97,10 @@ void link(ReactiveNode dep, ReactiveNode sub, int version) {
   }
 }
 
-/// Unlinks a link from the graph.
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
-@pragma('vm:align-loops')
-Link? unlink(Link link, [ReactiveNode? sub]) {
-  sub ??= link.sub;
+Link? unlink(Link link, ReactiveNode sub) {
   final dep = link.dep;
   final prevDep = link.prevDep;
   final nextDep = link.nextDep;
@@ -149,41 +132,37 @@ Link? unlink(Link link, [ReactiveNode? sub]) {
   return nextDep;
 }
 
-/// Handles when a node becomes unwatched.
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
 void _unwatched(ReactiveNode node) {
-  if (!node.flags.isMutable) {
-    // EffectScope or Effect - stop it
-    _stopScope(node);
+  final flags = node.flags;
+  if ((flags & ReactiveFlags.mutable) == ReactiveFlags.none) {
+    _stop(node);
   } else if (node.depsTail != null) {
-    // Computed - clear its dependencies
     node.depsTail = null;
-    node.flags = ReactiveFlags.mutable | ReactiveFlags.dirty;
+    node.flags = 17 as ReactiveFlags;
     _purgeDeps(node);
   }
 }
 
-/// Stops a scope or effect.
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
-void _stopScope(ReactiveNode node) {
+void _stop(ReactiveNode node) {
   node.depsTail = null;
   node.flags = ReactiveFlags.none;
   _purgeDeps(node);
   final sub = node.subs;
   if (sub != null) {
-    unlink(sub);
+    unlink(sub, sub.sub);
   }
 }
 
-/// Purges stale dependencies from a subscriber.
+@pragma('vm:align-loops')
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
-@pragma('vm:align-loops')
 void _purgeDeps(ReactiveNode sub) {
   final depsTail = sub.depsTail;
   Link? dep = depsTail != null ? depsTail.nextDep : sub.deps;
@@ -192,7 +171,10 @@ void _purgeDeps(ReactiveNode sub) {
   }
 }
 
-/// Propagates changes through the reactive graph.
+// ============================================================================
+// PROPAGATION
+// ============================================================================
+
 @pragma('vm:align-loops')
 void propagate(Link link) {
   Link? next = link.nextSub;
@@ -201,43 +183,31 @@ void propagate(Link link) {
   top:
   do {
     final sub = link.sub;
-    ReactiveFlags localFlags = sub.flags;
+    ReactiveFlags flags = sub.flags;
 
-    // Check propagation conditions using pre-computed flag combinations
-    final checkFlags = ReactiveFlags.recursedCheck |
-        ReactiveFlags.recursed |
-        ReactiveFlags.dirty |
-        ReactiveFlags.pending;
-
-    if (!localFlags.has(checkFlags)) {
-      sub.flags = localFlags | ReactiveFlags.pending;
-    } else if (!localFlags
-        .has(ReactiveFlags.recursedCheck | ReactiveFlags.recursed)) {
-      localFlags = ReactiveFlags.none;
-    } else if (!localFlags.isRecursedCheck) {
-      sub.flags =
-          (localFlags & ~ReactiveFlags.recursed) | ReactiveFlags.pending;
-    } else if (!localFlags.has(ReactiveFlags.dirty | ReactiveFlags.pending) &&
-        _isValidLink(link, sub)) {
-      sub.flags = localFlags | ReactiveFlags.recursed | ReactiveFlags.pending;
-      localFlags = localFlags & ReactiveFlags.mutable;
+    if ((flags & 60) == ReactiveFlags.none) {
+      sub.flags = flags | ReactiveFlags.pending;
+    } else if ((flags & 12) == ReactiveFlags.none) {
+      flags = ReactiveFlags.none;
+    } else if ((flags & ReactiveFlags.recursedCheck) == ReactiveFlags.none) {
+      sub.flags = (flags & -9) | ReactiveFlags.pending;
+    } else if ((flags & 48) == ReactiveFlags.none && _isValidLink(link, sub)) {
+      sub.flags = flags | (40 as ReactiveFlags);
+      flags &= ReactiveFlags.mutable;
     } else {
-      localFlags = ReactiveFlags.none;
+      flags = ReactiveFlags.none;
     }
 
-    // Notify watching effects
-    if (localFlags.isWatching) {
+    if ((flags & ReactiveFlags.watching) != ReactiveFlags.none) {
       _notify(sub as EffectNode);
     }
 
-    // Propagate to subscribers if mutable
-    if (localFlags.isMutable) {
+    if ((flags & ReactiveFlags.mutable) != ReactiveFlags.none) {
       final subSubs = sub.subs;
       if (subSubs != null) {
-        link = subSubs;
-        final nextSub = link.nextSub;
+        final nextSub = (link = subSubs).nextSub;
         if (nextSub != null) {
-          stack = Stack(value: next, prev: stack);
+          stack = Stack(next, stack);
           next = nextSub;
         }
         continue;
@@ -251,10 +221,10 @@ void propagate(Link link) {
     }
 
     while (stack != null) {
-      final stackValue = stack.value;
-      stack = stack.prev;
-      if (stackValue != null) {
-        link = stackValue;
+      final Stack(:value, :prev) = stack;
+      stack = prev;
+      if (value != null) {
+        link = value;
         next = link.nextSub;
         continue top;
       }
@@ -264,52 +234,55 @@ void propagate(Link link) {
   } while (true);
 }
 
-/// Notifies an effect that it needs to run.
-@pragma('vm:prefer-inline')
-@pragma('dart2js:tryInline')
-@pragma('wasm:prefer-inline')
+@pragma('vm:align-loops')
 void _notify(EffectNode effect) {
-  int insertIndex = _queuedLength;
-  final firstInsertedIndex = insertIndex;
+  EffectNode? head;
+  final tail = effect;
 
-  EffectNode? current = effect;
   do {
-    current!.flags = current.flags & ~ReactiveFlags.watching;
+    effect.flags &= -3;
+    effect.nextEffect = head;
+    head = effect;
 
-    // Ensure queue capacity
-    if (insertIndex >= _queued.length) {
-      _queued.length = _queued.length * 2;
-    }
-    _queued[insertIndex++] = current;
-
-    final subs = current.subs;
-    if (subs == null) break;
-
-    final sub = subs.sub;
-    // Only continue if the subscriber is an EffectNode and is watching
-    if (sub is! EffectNode || !sub.flags.isWatching) {
+    final next = effect.subs?.sub;
+    if (next == null ||
+        next is! EffectNode ||
+        (next.flags & ReactiveFlags.watching) == ReactiveFlags.none) {
       break;
     }
-    current = sub;
+    effect = next;
   } while (true);
 
-  _queuedLength = insertIndex;
-
-  // Reverse the order for proper execution sequence
-  int left = firstInsertedIndex;
-  int right = insertIndex - 1;
-  while (left < right) {
-    final temp = _queued[left];
-    _queued[left++] = _queued[right];
-    _queued[right--] = temp;
+  if (_queuedEffectsTail == null) {
+    _queuedEffects = _queuedEffectsTail = head;
+  } else {
+    _queuedEffectsTail!.nextEffect = head;
+    _queuedEffectsTail = tail;
   }
 }
 
-/// Checks if a link is valid (still in the dependency chain).
+@pragma('vm:align-loops')
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
+void shallowPropagate(Link link) {
+  Link? curr = link;
+  do {
+    final sub = curr!.sub;
+    final flags = sub.flags;
+    if ((flags & 48) == ReactiveFlags.pending) {
+      sub.flags = flags | ReactiveFlags.dirty;
+      if ((flags & 6) == ReactiveFlags.watching) {
+        _notify(sub as EffectNode);
+      }
+    }
+  } while ((curr = curr.nextSub) != null);
+}
+
 @pragma('vm:align-loops')
+@pragma('vm:prefer-inline')
+@pragma('dart2js:tryInline')
+@pragma('wasm:prefer-inline')
 bool _isValidLink(Link checkLink, ReactiveNode sub) {
   Link? link = sub.depsTail;
   while (link != null) {
@@ -319,48 +292,45 @@ bool _isValidLink(Link checkLink, ReactiveNode sub) {
   return false;
 }
 
-/// Checks if a subscriber is dirty and needs update.
+// ============================================================================
+// DIRTY CHECKING
+// ============================================================================
+
 @pragma('vm:align-loops')
-bool checkDirty(Link checkLink, ReactiveNode sub) {
+bool checkDirty(Link link, ReactiveNode sub) {
   Stack<Link>? stack;
   int checkDepth = 0;
-  Link? link = checkLink;
   bool dirty = false;
 
   top:
   do {
-    final dep = link!.dep;
+    final dep = link.dep;
     final flags = dep.flags;
 
-    if (sub.flags.isDirty) {
+    if ((sub.flags & ReactiveFlags.dirty) != ReactiveFlags.none) {
       dirty = true;
-    } else if (flags.hasAll(ReactiveFlags.mutable | ReactiveFlags.dirty)) {
+    } else if ((flags & 17) == 17) {
       if (_update(dep)) {
-        final depSubs = dep.subs!;
-        if (depSubs.nextSub != null) {
-          shallowPropagate(depSubs);
+        final subs = dep.subs!;
+        if (subs.nextSub != null) {
+          shallowPropagate(subs);
         }
         dirty = true;
       }
-    } else if (flags.hasAll(ReactiveFlags.mutable | ReactiveFlags.pending)) {
-      final depDeps = dep.deps;
-      if (depDeps == null) {
-        dep.flags = dep.flags & ~ReactiveFlags.pending;
-      } else {
-        if (link.nextSub != null || link.prevSub != null) {
-          stack = Stack(value: link, prev: stack);
-        }
-        link = depDeps;
-        sub = dep;
-        ++checkDepth;
-        continue;
+    } else if ((flags & 33) == 33) {
+      if (link.nextSub != null || link.prevSub != null) {
+        stack = Stack(link, stack);
       }
+      link = dep.deps!;
+      sub = dep;
+      ++checkDepth;
+      continue;
     }
 
     if (!dirty) {
-      final nextLink = link.nextDep;
-      if (nextLink != null) {
-        link = nextLink;
+      final nextDep = link.nextDep;
+      if (nextDep != null) {
+        link = nextDep;
         continue;
       }
     }
@@ -384,12 +354,12 @@ bool checkDirty(Link checkLink, ReactiveNode sub) {
         }
         dirty = false;
       } else {
-        sub.flags = sub.flags & ~ReactiveFlags.pending;
+        sub.flags &= -33;
       }
       sub = link.sub;
-      final nextLink = link.nextDep;
-      if (nextLink != null) {
-        link = nextLink;
+      final nextDep = link.nextDep;
+      if (nextDep != null) {
+        link = nextDep;
         continue top;
       }
     }
@@ -398,84 +368,84 @@ bool checkDirty(Link checkLink, ReactiveNode sub) {
   } while (true);
 }
 
-/// Performs shallow propagation to mark nodes as dirty.
-@pragma('vm:prefer-inline')
-@pragma('dart2js:tryInline')
-@pragma('wasm:prefer-inline')
-@pragma('vm:align-loops')
-void shallowPropagate(Link link) {
-  Link? current = link;
-  do {
-    final sub = current!.sub;
-    final flags = sub.flags;
-    if ((flags & (ReactiveFlags.pending | ReactiveFlags.dirty)) ==
-        ReactiveFlags.pending) {
-      sub.flags = flags | ReactiveFlags.dirty;
-      final checkFlags = ReactiveFlags.watching | ReactiveFlags.recursedCheck;
-      if ((flags & checkFlags) == ReactiveFlags.watching) {
-        _notify(sub as EffectNode);
-      }
-    }
-    current = current.nextSub;
-  } while (current != null);
-}
+// ============================================================================
+// UPDATE FUNCTIONS
+// ============================================================================
 
-/// Updates a node and returns whether the value changed.
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
 bool _update(ReactiveNode node) {
-  return switch (node) {
-    SignalNode() => _updateSignal(node),
-    ComputedNode() => _updateComputed(node),
-    _ => false,
-  };
+  if (node is ComputedNode<dynamic>) {
+    return _updateComputedNode(node);
+  } else if (node is SignalNode<dynamic>) {
+    return node.applyPending();
+  }
+  return false;
 }
 
-/// Updates a signal node.
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
-bool _updateSignal(SignalNode node) {
-  node.flags = ReactiveFlags.mutable;
-  return node.currentValue != (node.currentValue = node.pendingValue);
-}
-
-/// Updates a computed node.
-@pragma('vm:prefer-inline')
-@pragma('dart2js:tryInline')
-@pragma('wasm:prefer-inline')
-bool _updateComputed(ComputedNode node) {
+bool _updateComputedNode(ComputedNode<dynamic> node) {
   ++_cycle;
   node.depsTail = null;
-  node.flags = ReactiveFlags.mutable | ReactiveFlags.recursedCheck;
-  final prevSub = setActiveSub(node);
+  node.flags = 5 as ReactiveFlags;
+
+  final prevSub = _activeSub;
+  _activeSub = node;
   try {
-    final oldValue = node.value;
-    return oldValue != (node.value = node.compute(oldValue));
+    return node.recompute();
   } finally {
     _activeSub = prevSub;
-    node.flags = node.flags & ~ReactiveFlags.recursedCheck;
+    node.flags &= -5;
     _purgeDeps(node);
   }
 }
 
-/// Runs an effect.
+@pragma('vm:prefer-inline')
+@pragma('dart2js:tryInline')
+@pragma('wasm:prefer-inline')
+bool _updateComputed<T>(ComputedNode<T> node) {
+  ++_cycle;
+  node.depsTail = null;
+  node.flags = 5 as ReactiveFlags;
+
+  final prevSub = _activeSub;
+  _activeSub = node;
+  try {
+    return node.recompute();
+  } finally {
+    _activeSub = prevSub;
+    node.flags &= -5;
+    _purgeDeps(node);
+  }
+}
+
+// ============================================================================
+// EFFECT EXECUTION
+// ============================================================================
+
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
 void _runEffect(EffectNode effect) {
   final flags = effect.flags;
-  if (flags.isDirty || (flags.isPending && checkDirty(effect.deps!, effect))) {
+
+  if ((flags & ReactiveFlags.dirty) != ReactiveFlags.none ||
+      ((flags & ReactiveFlags.pending) != ReactiveFlags.none &&
+          checkDirty(effect.deps!, effect))) {
     ++_cycle;
     effect.depsTail = null;
-    effect.flags = ReactiveFlags.watching | ReactiveFlags.recursedCheck;
-    final prevSub = setActiveSub(effect);
+    effect.flags = 6 as ReactiveFlags;
+
+    final prevSub = _activeSub;
+    _activeSub = effect;
     try {
       effect.fn();
     } finally {
       _activeSub = prevSub;
-      effect.flags = effect.flags & ~ReactiveFlags.recursedCheck;
+      effect.flags &= -5;
       _purgeDeps(effect);
     }
   } else {
@@ -483,53 +453,54 @@ void _runEffect(EffectNode effect) {
   }
 }
 
-/// Flushes the effect queue.
+@pragma('vm:align-loops')
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
-@pragma('vm:align-loops')
 void flush() {
-  while (_notifyIndex < _queuedLength) {
-    final effect = _queued[_notifyIndex]!;
-    _queued[_notifyIndex++] = null;
+  while (_queuedEffects != null) {
+    final effect = _queuedEffects!;
+    final next = effect.nextEffect as EffectNode?;
+    if (next != null) {
+      _queuedEffects = next;
+      effect.nextEffect = null;
+    } else {
+      _queuedEffects = null;
+      _queuedEffectsTail = null;
+    }
     _runEffect(effect);
   }
-  _notifyIndex = 0;
-  _queuedLength = 0;
 }
 
-/// Gets a computed value with dependency tracking.
+// ============================================================================
+// PUBLIC API
+// ============================================================================
+
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
 T getComputed<T>(ComputedNode<T> node) {
   final flags = node.flags;
-  bool needsUpdate = false;
-  if (flags.isDirty) {
-    needsUpdate = true;
-  } else if (flags.isPending) {
-    if (checkDirty(node.deps!, node)) {
-      needsUpdate = true;
-    } else {
-      node.flags = flags & ~ReactiveFlags.pending;
-    }
-  }
 
-  if (needsUpdate) {
+  if ((flags & ReactiveFlags.dirty) != ReactiveFlags.none ||
+      ((flags & ReactiveFlags.pending) != ReactiveFlags.none &&
+          (checkDirty(node.deps!, node) ||
+              identical(node.flags = flags & -33, false)))) {
     if (_updateComputed(node)) {
       final subs = node.subs;
       if (subs != null) {
         shallowPropagate(subs);
       }
     }
-  } else if (flags.isNone) {
-    node.flags = ReactiveFlags.mutable | ReactiveFlags.recursedCheck;
-    final prevSub = setActiveSub(node);
+  } else if (flags == ReactiveFlags.none) {
+    node.flags = 5 as ReactiveFlags;
+    final prevSub = _activeSub;
+    _activeSub = node;
     try {
-      node.value = node.compute(null);
+      node.cachedValue = node.getter(null);
     } finally {
       _activeSub = prevSub;
-      node.flags = node.flags & ~ReactiveFlags.recursedCheck;
+      node.flags &= -5;
     }
   }
 
@@ -537,17 +508,16 @@ T getComputed<T>(ComputedNode<T> node) {
   if (sub != null) {
     link(node, sub, _cycle);
   }
-  return node.value as T;
+  return node.cachedValue as T;
 }
 
-/// Gets a signal value with dependency tracking.
+@pragma('vm:align-loops')
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
-@pragma('vm:align-loops')
 T getSignal<T>(SignalNode<T> node) {
-  if (node.flags.isDirty) {
-    if (_updateSignal(node)) {
+  if ((node.flags & ReactiveFlags.dirty) != ReactiveFlags.none) {
+    if (node.applyPending()) {
       final subs = node.subs;
       if (subs != null) {
         shallowPropagate(subs);
@@ -557,22 +527,22 @@ T getSignal<T>(SignalNode<T> node) {
 
   ReactiveNode? sub = _activeSub;
   while (sub != null) {
-    if (sub.flags.has(ReactiveFlags.mutable | ReactiveFlags.watching)) {
+    if ((sub.flags & 3) != ReactiveFlags.none) {
       link(node, sub, _cycle);
       break;
     }
     sub = sub.subs?.sub;
   }
+
   return node.currentValue;
 }
 
-/// Sets a signal value.
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
 void setSignal<T>(SignalNode<T> node, T value) {
   if (node.pendingValue != (node.pendingValue = value)) {
-    node.flags = ReactiveFlags.mutable | ReactiveFlags.dirty;
+    node.flags = 17 as ReactiveFlags;
     final subs = node.subs;
     if (subs != null) {
       propagate(subs);
@@ -583,13 +553,18 @@ void setSignal<T>(SignalNode<T> node, T value) {
   }
 }
 
-/// Creates and runs an effect.
+// ============================================================================
+// EFFECT MANAGEMENT
+// ============================================================================
+
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
 EffectNode createEffect(void Function() fn) {
-  final e = EffectNode(fn: fn);
-  final prevSub = setActiveSub(e);
+  final e = EffectNode(fn);
+
+  final prevSub = _activeSub;
+  _activeSub = e;
   if (prevSub != null) {
     link(e, prevSub, 0);
   }
@@ -597,26 +572,26 @@ EffectNode createEffect(void Function() fn) {
     e.fn();
   } finally {
     _activeSub = prevSub;
-    e.flags = e.flags & ~ReactiveFlags.recursedCheck;
+    e.flags &= -5;
   }
   return e;
 }
 
-/// Stops an effect.
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
 void stopEffect(EffectNode effect) {
-  _stopScope(effect);
+  _stop(effect);
 }
 
-/// Creates an effect scope.
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
 ScopeNode createEffectScope(void Function() fn) {
   final e = ScopeNode();
-  final prevSub = setActiveSub(e);
+
+  final prevSub = _activeSub;
+  _activeSub = e;
   if (prevSub != null) {
     link(e, prevSub, 0);
   }
@@ -628,34 +603,34 @@ ScopeNode createEffectScope(void Function() fn) {
   return e;
 }
 
-/// Stops an effect scope.
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
 void stopEffectScope(ScopeNode scope) {
-  _stopScope(scope);
+  _stop(scope);
 }
 
-/// Triggers all subscribers of the tracked dependencies.
-@pragma('vm:prefer-inline')
-@pragma('dart2js:tryInline')
-@pragma('wasm:prefer-inline')
+@pragma('vm:align-loops')
 void triggerFn(void Function() fn) {
   final sub = ScopeNode();
   sub.flags = ReactiveFlags.watching;
-  final prevSub = setActiveSub(sub);
+
+  final prevSub = _activeSub;
+  _activeSub = sub;
   try {
     fn();
   } finally {
     _activeSub = prevSub;
-    while (sub.deps != null) {
-      final link = sub.deps!;
+    Link? link = sub.deps;
+    while (link != null) {
       final dep = link.dep;
-      unlink(link, sub);
+      final nextLink = unlink(link, sub);
       if (dep.subs != null) {
+        sub.flags = ReactiveFlags.none;
         propagate(dep.subs!);
         shallowPropagate(dep.subs!);
       }
+      link = nextLink;
     }
     if (_batchDepth == 0) {
       flush();

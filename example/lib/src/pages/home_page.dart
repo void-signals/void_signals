@@ -7,6 +7,7 @@ import '../state/favorites_state.dart';
 import '../utils/responsive.dart';
 import 'api_showcase_page.dart';
 import 'lint_demo_page.dart';
+import 'utilities_showcase_page.dart';
 import 'search_page.dart';
 import 'favorites_page.dart';
 import 'package_detail_page.dart';
@@ -56,6 +57,11 @@ class _HomePageState extends State<HomePage> {
       label: 'API Demo',
     ),
     NavigationDestination(
+      icon: Icon(Icons.build_outlined),
+      selectedIcon: Icon(Icons.build),
+      label: 'Utilities',
+    ),
+    NavigationDestination(
       icon: Icon(Icons.bug_report_outlined),
       selectedIcon: Icon(Icons.bug_report),
       label: 'Lint Demo',
@@ -72,6 +78,7 @@ class _HomePageState extends State<HomePage> {
             SearchPage(),
             FavoritesPage(),
             ApiShowcasePage(),
+            UtilitiesShowcasePage(),
             LintDemoPage(),
           ],
         );
@@ -95,8 +102,48 @@ class _HomePageState extends State<HomePage> {
 }
 
 /// Explore page showing popular packages
-class _ExplorePage extends StatelessWidget {
+///
+/// Demonstrates usage of:
+/// - [SignalScrollController] for reactive scroll state with back-to-top button
+/// - [ClockSignal] for reactive real-time clock display
+/// - [throttled] for throttled scroll direction indicator
+class _ExplorePage extends StatefulWidget {
   const _ExplorePage();
+
+  @override
+  State<_ExplorePage> createState() => _ExplorePageState();
+}
+
+class _ExplorePageState extends State<_ExplorePage> {
+  // Use SignalScrollController for reactive scroll position tracking
+  late final SignalScrollController _scrollController;
+
+  // Use ClockSignal for real-time clock in app bar
+  late final ClockSignal _clock;
+
+  // Use throttled for scroll direction indicator (throttle updates to avoid jitter)
+  late final TimedSignal<ScrollDirection> _throttledDirection;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = SignalScrollController(showBackToTopThreshold: 300);
+    _clock = clockSignal(updateInterval: const Duration(seconds: 1));
+
+    // Throttle scroll direction updates to every 100ms to avoid jittery UI
+    _throttledDirection = throttled(
+      _scrollController.direction,
+      const Duration(milliseconds: 100),
+    );
+  }
+
+  @override
+  void dispose() {
+    _throttledDirection.dispose();
+    _clock.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,174 +154,285 @@ class _ExplorePage extends StatelessWidget {
     final padding = ResponsiveLayout.getContentPadding(context);
     final maxWidth = ResponsiveLayout.getMaxContentWidth(context);
 
-    return CustomScrollView(
-      slivers: [
-        SliverAppBar.large(
-          title: const Text('Pub.dev Explorer'),
-          floating: true,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.info_outline),
-              onPressed: () => _showAboutDialog(context),
-              tooltip: 'About',
+    return Stack(
+      children: [
+        CustomScrollView(
+          controller: _scrollController.controller,
+          slivers: [
+            SliverAppBar.large(
+              title: const Text('Pub.dev Explorer'),
+              floating: true,
+              actions: [
+                // Real-time clock display using ClockSignal
+                Watch(
+                  builder: (context, child) {
+                    final now = _clock.now.value;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
+                            style: theme.textTheme.labelMedium?.copyWith(
+                              fontFamily: 'monospace',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.info_outline),
+                  onPressed: () => _showAboutDialog(context),
+                  tooltip: 'About',
+                ),
+              ],
+            ),
+
+            // Hero section
+            SliverToBoxAdapter(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: maxWidth ?? double.infinity,
+                  ),
+                  child: Padding(
+                    padding: padding,
+                    child: _HeroSection(colorScheme: colorScheme, theme: theme),
+                  ),
+                ),
+              ),
+            ),
+
+            // Category chips
+            SliverToBoxAdapter(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: maxWidth ?? double.infinity,
+                  ),
+                  child: SizedBox(
+                    height: 56,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: padding.horizontal / 2,
+                      ),
+                      children: [
+                        _CategoryChip(
+                          label: 'Popular',
+                          icon: Icons.trending_up,
+                          onTap: () => searchState.search('flutter'),
+                        ),
+                        _CategoryChip(
+                          label: 'State Management',
+                          icon: Icons.account_tree,
+                          onTap: () => searchState.search('state management'),
+                        ),
+                        _CategoryChip(
+                          label: 'UI',
+                          icon: Icons.widgets,
+                          onTap: () => searchState.search('ui components'),
+                        ),
+                        _CategoryChip(
+                          label: 'Networking',
+                          icon: Icons.cloud,
+                          onTap: () => searchState.search('http client'),
+                        ),
+                        _CategoryChip(
+                          label: 'Database',
+                          icon: Icons.storage,
+                          onTap: () => searchState.search('database'),
+                        ),
+                        _CategoryChip(
+                          label: 'Firebase',
+                          icon: Icons.local_fire_department,
+                          onTap: () => searchState.search('firebase'),
+                        ),
+                        _CategoryChip(
+                          label: 'Animation',
+                          icon: Icons.animation,
+                          onTap: () => searchState.search('animation'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
+            // Section header
+            SliverToBoxAdapter(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: maxWidth ?? double.infinity,
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: padding.horizontal / 2),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Popular Packages',
+                            style: theme.textTheme.titleLarge),
+                        Watch(
+                          builder: (context, child) {
+                            return _SortDropdown(
+                              value: searchState.sortOrder.value,
+                              onChanged: searchState.changeSortOrder,
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 8)),
+
+            // Package list/grid based on screen size
+            Watch(
+              builder: (context, child) {
+                return searchState.results.value.when(
+                  loading: () => const SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(32),
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  ),
+                  error: (error, _) => SliverToBoxAdapter(
+                    child: _ErrorWidget(
+                      error: error,
+                      onRetry: () =>
+                          searchState.search(searchState.query.value),
+                    ),
+                  ),
+                  data: (_) {
+                    final packages = searchState.packages.value;
+                    if (packages.isEmpty) {
+                      return const SliverToBoxAdapter(child: _EmptyWidget());
+                    }
+
+                    // Use grid for larger screens, list for compact
+                    if (isCompact) {
+                      return _buildPackageList(
+                        packages: packages,
+                        padding: padding,
+                        maxWidth: maxWidth,
+                        context: context,
+                      );
+                    } else {
+                      return _buildPackageGrid(
+                        packages: packages,
+                        padding: padding,
+                        maxWidth: maxWidth,
+                        gridColumns: gridColumns,
+                        context: context,
+                      );
+                    }
+                  },
+                );
+              },
+            ),
+
+            // Bottom padding for safe area
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: MediaQuery.of(context).padding.bottom + 100,
+              ),
             ),
           ],
         ),
 
-        // Hero section
-        SliverToBoxAdapter(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: maxWidth ?? double.infinity,
-              ),
-              child: Padding(
-                padding: padding,
-                child: _HeroSection(colorScheme: colorScheme, theme: theme),
-              ),
-            ),
-          ),
-        ),
-
-        // Category chips
-        SliverToBoxAdapter(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: maxWidth ?? double.infinity,
-              ),
-              child: SizedBox(
-                height: 56,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: padding.horizontal / 2,
-                  ),
-                  children: [
-                    _CategoryChip(
-                      label: 'Popular',
-                      icon: Icons.trending_up,
-                      onTap: () => searchState.search('flutter'),
-                    ),
-                    _CategoryChip(
-                      label: 'State Management',
-                      icon: Icons.account_tree,
-                      onTap: () => searchState.search('state management'),
-                    ),
-                    _CategoryChip(
-                      label: 'UI',
-                      icon: Icons.widgets,
-                      onTap: () => searchState.search('ui components'),
-                    ),
-                    _CategoryChip(
-                      label: 'Networking',
-                      icon: Icons.cloud,
-                      onTap: () => searchState.search('http client'),
-                    ),
-                    _CategoryChip(
-                      label: 'Database',
-                      icon: Icons.storage,
-                      onTap: () => searchState.search('database'),
-                    ),
-                    _CategoryChip(
-                      label: 'Firebase',
-                      icon: Icons.local_fire_department,
-                      onTap: () => searchState.search('firebase'),
-                    ),
-                    _CategoryChip(
-                      label: 'Animation',
-                      icon: Icons.animation,
-                      onTap: () => searchState.search('animation'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-
-        const SliverToBoxAdapter(child: SizedBox(height: 16)),
-
-        // Section header
-        SliverToBoxAdapter(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: maxWidth ?? double.infinity,
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: padding.horizontal / 2),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Popular Packages', style: theme.textTheme.titleLarge),
-                    Watch(
-                      builder: (context, child) {
-                        return _SortDropdown(
-                          value: searchState.sortOrder.value,
-                          onChanged: searchState.changeSortOrder,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-
-        const SliverToBoxAdapter(child: SizedBox(height: 8)),
-
-        // Package list/grid based on screen size
-        Watch(
-          builder: (context, child) {
-            return searchState.results.value.when(
-              loading: () => const SliverToBoxAdapter(
-                child: Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(32),
-                    child: CircularProgressIndicator(),
+        // Floating back-to-top button using SignalScrollController's reactive state
+        Positioned(
+          right: 16,
+          bottom: MediaQuery.of(context).padding.bottom + 100,
+          child: Watch(
+            builder: (context, child) {
+              // Only show when scrolled past threshold
+              final showButton = _scrollController.showBackToTop.value;
+              return AnimatedSlide(
+                duration: const Duration(milliseconds: 200),
+                offset: showButton ? Offset.zero : const Offset(0, 2),
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: showButton ? 1.0 : 0.0,
+                  child: FloatingActionButton.small(
+                    heroTag: 'home_back_to_top',
+                    onPressed: _scrollController.animateToTop,
+                    tooltip: 'Back to top',
+                    child: const Icon(Icons.arrow_upward),
                   ),
                 ),
-              ),
-              error: (error, _) => SliverToBoxAdapter(
-                child: _ErrorWidget(
-                  error: error,
-                  onRetry: () => searchState.search(searchState.query.value),
-                ),
-              ),
-              data: (_) {
-                final packages = searchState.packages.value;
-                if (packages.isEmpty) {
-                  return const SliverToBoxAdapter(child: _EmptyWidget());
-                }
-
-                // Use grid for larger screens, list for compact
-                if (isCompact) {
-                  return _buildPackageList(
-                    packages: packages,
-                    padding: padding,
-                    maxWidth: maxWidth,
-                    context: context,
-                  );
-                } else {
-                  return _buildPackageGrid(
-                    packages: packages,
-                    padding: padding,
-                    maxWidth: maxWidth,
-                    gridColumns: gridColumns,
-                    context: context,
-                  );
-                }
-              },
-            );
-          },
+              );
+            },
+          ),
         ),
 
-        // Bottom padding for safe area
-        SliverToBoxAdapter(
-          child: SizedBox(
-            height: MediaQuery.of(context).padding.bottom + 100,
+        // Scroll direction indicator using throttled signal
+        Positioned(
+          left: 16,
+          bottom: MediaQuery.of(context).padding.bottom + 100,
+          child: Watch(
+            builder: (context, child) {
+              final direction = _throttledDirection.value;
+              if (direction == ScrollDirection.idle) {
+                return const SizedBox.shrink();
+              }
+              return AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: direction != ScrollDirection.idle ? 1.0 : 0.0,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colorScheme.secondaryContainer,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        direction == ScrollDirection.forward
+                            ? Icons.arrow_downward
+                            : Icons.arrow_upward,
+                        size: 16,
+                        color: colorScheme.onSecondaryContainer,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        direction == ScrollDirection.forward
+                            ? 'Scrolling Down'
+                            : 'Scrolling Up',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ],
@@ -300,7 +458,8 @@ class _ExplorePage extends StatelessWidget {
                 for (int index = 0; index < packages.length; index++) ...[
                   PackageCard(
                     packageName: packages[index].package,
-                    onTap: () => _navigateToDetail(context, packages[index].package),
+                    onTap: () =>
+                        _navigateToDetail(context, packages[index].package),
                   ),
                   if (index < packages.length - 1) const SizedBox(height: 12),
                 ],
@@ -333,7 +492,7 @@ class _ExplorePage extends StatelessWidget {
           ),
           sliver: SliverGrid(
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 320,
+              maxCrossAxisExtent: 360,
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
               mainAxisExtent: 200,

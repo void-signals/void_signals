@@ -1,11 +1,23 @@
-# void_signals
+<p align="center">
+  <img src="https://raw.githubusercontent.com/void-signals/void-signals/main/art/void.png" alt="void_signals logo" width="180" />
+</p>
 
-A high-performance signal reactivity library for Dart, based on [alien-signals](https://github.com/stackblitz/alien-signals).
+<h1 align="center">void_signals</h1>
 
-[![Pub Version](https://img.shields.io/pub/v/void_signals)](https://pub.dev/packages/void_signals)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+<p align="center">
+  A high-performance signal reactivity library for Dart, based on <a href="https://github.com/stackblitz/alien-signals">alien-signals</a>.
+</p>
 
-English | [简体中文](README_CN.md)
+<p align="center">
+  <a href="https://pub.dev/packages/void_signals"><img src="https://img.shields.io/pub/v/void_signals" alt="Pub Version" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT" /></a>
+</p>
+
+<p align="center">
+  English | <a href="README_CN.md">简体中文</a>
+</p>
+
+---
 
 ## Features
 

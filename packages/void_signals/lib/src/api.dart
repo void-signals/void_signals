@@ -1,6 +1,7 @@
+import 'package:void_signals/src/nodes.dart';
+import 'package:void_signals/src/system.dart';
+
 import 'flags.dart';
-import 'nodes.dart';
-import 'system.dart';
 
 /// A reactive signal that holds a value and notifies subscribers when changed.
 ///
@@ -15,42 +16,29 @@ import 'system.dart';
 /// count(1);       // Sets value to 1
 /// print(count()); // 1
 /// ```
-class Signal<T> {
-  final SignalNode<T> _node;
-
+final class Signal<T> extends SignalNode<T> {
   /// Creates a new signal with the given initial value.
-  Signal(T initialValue) : _node = SignalNode<T>(value: initialValue);
+  Signal(T initialValue) : super(initialValue);
 
   /// Gets the current value of the signal.
-  ///
-  /// This also tracks the signal as a dependency if called within
-  /// an effect or computed context.
   @pragma('vm:prefer-inline')
   @pragma('dart2js:tryInline')
   @pragma('wasm:prefer-inline')
-  T get value => getSignal(_node);
+  T get value => getSignal(this);
 
   /// Sets the value of the signal.
-  ///
-  /// If the new value is different from the current value, all dependent
-  /// effects and computed values will be notified.
   @pragma('vm:prefer-inline')
   @pragma('dart2js:tryInline')
   @pragma('wasm:prefer-inline')
-  set value(T newValue) => setSignal(_node, newValue);
+  set value(T newValue) => setSignal(this, newValue);
 
   /// Gets the current value.
-  ///
-  /// This is the callable form, equivalent to accessing [value].
   @pragma('vm:prefer-inline')
   @pragma('dart2js:tryInline')
   @pragma('wasm:prefer-inline')
   T call() => value;
 
   /// Updates the signal value.
-  ///
-  /// Use this method when you need to set a value that might be null,
-  /// since the [call] method only reads the value.
   @pragma('vm:prefer-inline')
   @pragma('dart2js:tryInline')
   @pragma('wasm:prefer-inline')
@@ -60,33 +48,30 @@ class Signal<T> {
   @pragma('vm:prefer-inline')
   @pragma('dart2js:tryInline')
   @pragma('wasm:prefer-inline')
-  T peek() => _node.currentValue;
+  T peek() => currentValue;
 
   /// Reads the current value without tracking, but ensures any pending
   /// updates have been applied first.
-  ///
-  /// This is useful when you need the latest value but don't want to
-  /// create a dependency.
   @pragma('vm:prefer-inline')
   @pragma('dart2js:tryInline')
   @pragma('wasm:prefer-inline')
   T syncPeek() {
-    // If there's a pending update, apply it
-    if (_node.flags.isDirty) {
-      _node.currentValue = _node.pendingValue;
-      _node.flags = ReactiveFlags.mutable;
+    // If there's a pending update, apply it (16 = dirty)
+    if ((flags as int) & 16 != 0) {
+      currentValue = pendingValue;
+      flags = 1 as ReactiveFlags; // mutable
     }
-    return _node.currentValue;
+    return currentValue;
   }
 
   /// Returns whether this signal has any subscribers.
   @pragma('vm:prefer-inline')
   @pragma('dart2js:tryInline')
   @pragma('wasm:prefer-inline')
-  bool get hasSubscribers => _node.hasSubscribers;
+  bool get hasSubscribers => subs != null;
 
   @override
-  String toString() => 'Signal($value)';
+  String toString() => 'Signal($currentValue)';
 }
 
 /// A computed value that automatically updates when its dependencies change.
@@ -94,33 +79,19 @@ class Signal<T> {
 /// Computed values are derived from other signals and computed values.
 /// They are lazily evaluated and cached until one of their dependencies changes.
 ///
-/// Example:
-/// ```dart
-/// final firstName = signal('John');
-/// final lastName = signal('Doe');
-/// final fullName = computed((prev) => '${firstName()} ${lastName()}');
-/// print(fullName()); // 'John Doe'
-/// firstName('Jane');
-/// print(fullName()); // 'Jane Doe'
-/// ```
-class Computed<T> {
-  final ComputedNode<T> _node;
-
+/// Use [value] to get the computed value (triggers computation if needed).
+/// Use [peek] to read the cached value without triggering recomputation.
+final class Computed<T> extends ComputedNode<T> {
   /// Creates a new computed value with the given getter function.
-  ///
-  /// The getter receives the previous computed value as an argument,
-  /// which can be useful for optimizations or maintaining state.
-  Computed(T Function(T? previousValue) getter)
-      : _node = ComputedNode<T>(getter: getter);
+  Computed(T Function(T? previousValue) getter) : super(getter);
 
   /// Gets the current computed value.
   ///
-  /// The value is lazily computed and cached. It will only be recomputed
-  /// when one of its dependencies changes.
+  /// This triggers dependency tracking and recomputation if necessary.
   @pragma('vm:prefer-inline')
   @pragma('dart2js:tryInline')
   @pragma('wasm:prefer-inline')
-  T get value => getComputed(_node);
+  T get value => getComputed(this);
 
   /// Gets the current computed value.
   @pragma('vm:prefer-inline')
@@ -129,16 +100,18 @@ class Computed<T> {
   T call() => value;
 
   /// Reads the cached value without tracking or recomputing.
+  ///
+  /// Returns `null` if the computed has never been evaluated.
   @pragma('vm:prefer-inline')
   @pragma('dart2js:tryInline')
   @pragma('wasm:prefer-inline')
-  T? peek() => _node.value;
+  T? peek() => cachedValue;
 
   /// Returns whether this computed has any subscribers.
   @pragma('vm:prefer-inline')
   @pragma('dart2js:tryInline')
   @pragma('wasm:prefer-inline')
-  bool get hasSubscribers => _node.hasSubscribers;
+  bool get hasSubscribers => subs != null;
 
   @override
   String toString() => 'Computed($value)';
@@ -149,25 +122,12 @@ class Computed<T> {
 /// Effects are used to perform side effects in response to reactive changes.
 /// They are automatically re-run whenever any of the signals or computed
 /// values they access are updated.
-///
-/// Example:
-/// ```dart
-/// final count = signal(0);
-/// final eff = effect(() {
-///   print('Count is: ${count()}');
-/// });
-/// count(1); // Prints: 'Count is: 1'
-/// eff.stop(); // Stop listening to changes
-/// ```
 class Effect {
   final EffectNode _node;
 
   Effect._(this._node);
 
   /// Stops the effect from running.
-  ///
-  /// After calling stop(), the effect will no longer react to changes
-  /// in its dependencies.
   @pragma('vm:prefer-inline')
   @pragma('dart2js:tryInline')
   @pragma('wasm:prefer-inline')
@@ -180,17 +140,7 @@ class Effect {
 /// A scope that manages a group of effects.
 ///
 /// Effect scopes allow you to group multiple effects together and
-/// dispose of them all at once. This is useful for cleanup when
-/// a component or feature is destroyed.
-///
-/// Example:
-/// ```dart
-/// final scope = effectScope(() {
-///   effect(() { /* effect 1 */ });
-///   effect(() { /* effect 2 */ });
-/// });
-/// scope.stop(); // Stops all effects created in the scope
-/// ```
+/// dispose of them all at once.
 class EffectScope {
   final ScopeNode _node;
 
@@ -211,24 +161,12 @@ class EffectScope {
 // =============================================================================
 
 /// Creates a new reactive signal with the given initial value.
-///
-/// Example:
-/// ```dart
-/// final count = signal(0);
-/// ```
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
 Signal<T> signal<T>(T value) => Signal<T>(value);
 
 /// Creates a new computed value with the given getter function.
-///
-/// The getter function receives the previous computed value as an argument.
-///
-/// Example:
-/// ```dart
-/// final doubled = computed((prev) => count() * 2);
-/// ```
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
@@ -236,14 +174,6 @@ Computed<T> computed<T>(T Function(T? previousValue) getter) =>
     Computed<T>(getter);
 
 /// Creates a new computed value with a simple getter function.
-///
-/// This is a convenience method for computed values that don't need
-/// access to the previous value.
-///
-/// Example:
-/// ```dart
-/// final doubled = computedFrom(() => count() * 2);
-/// ```
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
@@ -251,33 +181,12 @@ Computed<T> computedFrom<T>(T Function() getter) =>
     Computed<T>((_) => getter());
 
 /// Creates a new effect that runs the given function.
-///
-/// The effect will run immediately and then again whenever any of
-/// its dependencies change.
-///
-/// Example:
-/// ```dart
-/// final eff = effect(() {
-///   print('Count: ${count()}');
-/// });
-/// ```
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
 Effect effect(void Function() fn) => Effect._(createEffect(fn));
 
 /// Creates a new effect scope.
-///
-/// All effects created within the scope's function will be tracked
-/// and can be disposed together.
-///
-/// Example:
-/// ```dart
-/// final scope = effectScope(() {
-///   effect(() { /* ... */ });
-/// });
-/// scope.stop();
-/// ```
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
@@ -285,32 +194,12 @@ EffectScope effectScope(void Function() fn) =>
     EffectScope._(createEffectScope(fn));
 
 /// Triggers all subscribers of the tracked dependencies.
-///
-/// This is useful for manually triggering updates to dependencies.
-///
-/// Example:
-/// ```dart
-/// trigger(() {
-///   count(); // Track this signal
-/// });
-/// ```
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
 void trigger(void Function() fn) => triggerFn(fn);
 
 /// Batches multiple signal updates into a single flush.
-///
-/// This is useful for performance optimization when updating
-/// multiple signals at once.
-///
-/// Example:
-/// ```dart
-/// batch(() {
-///   signal1(newValue1);
-///   signal2(newValue2);
-/// }); // Effects run once after all updates
-/// ```
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')
@@ -324,20 +213,6 @@ T batch<T>(T Function() fn) {
 }
 
 /// Runs a function without tracking dependencies.
-///
-/// This is useful when you want to read a signal's value without
-/// creating a dependency.
-///
-/// Example:
-/// ```dart
-/// effect(() {
-///   // This will create a dependency on count
-///   print(count());
-///
-///   // This will not create a dependency
-///   untrack(() => otherSignal());
-/// });
-/// ```
 @pragma('vm:prefer-inline')
 @pragma('dart2js:tryInline')
 @pragma('wasm:prefer-inline')

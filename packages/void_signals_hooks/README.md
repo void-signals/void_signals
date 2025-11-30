@@ -1,11 +1,23 @@
-# void_signals_hooks
+<p align="center">
+  <img src="https://raw.githubusercontent.com/void-signals/void-signals/main/art/void.png" alt="void_signals logo" width="180" />
+</p>
 
-Flutter hooks integration for [void_signals](https://pub.dev/packages/void_signals) - use reactive signals with flutter_hooks.
+<h1 align="center">void_signals_hooks</h1>
 
-[![Pub Version](https://img.shields.io/pub/v/void_signals_hooks)](https://pub.dev/packages/void_signals_hooks)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+<p align="center">
+  Flutter hooks integration for <a href="https://pub.dev/packages/void_signals">void_signals</a> - use reactive signals with flutter_hooks.
+</p>
 
-English | [简体中文](README_CN.md)
+<p align="center">
+  <a href="https://pub.dev/packages/void_signals_hooks"><img src="https://img.shields.io/pub/v/void_signals_hooks" alt="Pub Version" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT" /></a>
+</p>
+
+<p align="center">
+  English | <a href="README_CN.md">简体中文</a>
+</p>
+
+---
 
 ## Features
 
@@ -255,6 +267,163 @@ final (current, previous) = usePrevious(count);
 
 // current.value: 5
 // previous.value: 4 (or null if first value)
+```
+
+## Async Hooks
+
+### useAsync
+
+Hook for handling async operations with manual execution control.
+
+```dart
+final (state, execute, reset) = useAsync<User>();
+
+// Execute async operation
+void loadUser() async {
+  await execute(() async {
+    await Future.delayed(Duration(seconds: 1));
+    return User(name: 'John', age: 30);
+  });
+}
+
+// Use state with pattern matching
+state.when(
+  idle: () => const Text('Press button to load'),
+  loading: () => const CircularProgressIndicator(),
+  success: (user) => Text('Hello, ${user.name}'),
+  error: (error) => Text('Error: $error'),
+);
+
+// Reset to idle state
+reset();
+```
+
+### useAsyncData
+
+Hook for auto-executing async operations with dependency keys.
+
+```dart
+// Auto-executes when userId changes
+final state = useAsyncData(
+  () async {
+    final response = await api.fetchUser(userId);
+    return response;
+  },
+  keys: [userId],
+);
+
+// Use maybeWhen for partial handling
+state.maybeWhen(
+  success: (user) => UserCard(user: user),
+  orElse: () => const LoadingPlaceholder(),
+);
+```
+
+### useLatest
+
+Get a reference to the latest value without subscribing to changes.
+
+```dart
+final count = useSignal(0);
+final latestRef = useLatest(count);
+
+// Access latest value in callbacks without causing rebuilds
+void handleClick() {
+  print('Current count: ${latestRef.value}');
+}
+```
+
+### useListener
+
+Listen to signal changes for side effects.
+
+```dart
+final count = useSignal(0);
+
+useListener(
+  count,
+  (value) {
+    print('Count changed to: $value');
+    analytics.log('count_changed', value);
+  },
+  fireImmediately: true,  // Fire with current value immediately
+);
+```
+
+## State Hooks
+
+### useToggle
+
+Simple boolean toggle hook.
+
+```dart
+final (isOn, toggle, setOn, setOff) = useToggle(false);
+
+// Toggle the value
+toggle();
+
+// Set specific values
+setOn();   // Set to true
+setOff();  // Set to false
+```
+
+### useCounter
+
+Counter hook with increment, decrement, reset, and set.
+
+```dart
+final (count, increment, decrement, reset, setValue) = useCounter(
+  initialValue: 0,
+  step: 1,
+  min: 0,
+  max: 100,
+);
+
+increment();     // count + step
+decrement();     // count - step
+reset();         // back to initial value
+setValue(50);    // set specific value
+```
+
+## Timer Hooks
+
+### useInterval
+
+Runs a callback periodically.
+
+```dart
+// Run every second
+useInterval(
+  () {
+    fetchNewMessages();
+  },
+  Duration(seconds: 1),
+);
+
+// Pass null callback to pause
+useInterval(
+  isPaused ? null : () => tick(),
+  Duration(seconds: 1),
+);
+```
+
+### useTimeout
+
+Runs a callback after a delay.
+
+```dart
+final (isActive, cancel, restart) = useTimeout(
+  () {
+    showNotification('Time\'s up!');
+  },
+  Duration(seconds: 5),
+);
+
+// Cancel the timeout
+cancel();
+
+// Restart the timeout
+restart();
 ```
 
 ## Collection Hooks

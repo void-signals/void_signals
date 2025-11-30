@@ -1,0 +1,13 @@
+name: reactivity_benchmark
+description: Shared benchmark library for Dart reactivity/signals frameworks.
+version: 1.0.0
+repository: https://github.com/iota9star/void_signals
+publish_to: none
+
+environment:
+  sdk: ^3.10.0
+
+dependencies: {}
+
+dev_dependencies:
+  lints: ^6.0.0

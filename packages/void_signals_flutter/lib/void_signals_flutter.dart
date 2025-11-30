@@ -207,6 +207,65 @@ export 'src/utils/combinators.dart'
         combine4,
         withPrevious;
 
+// Flutter controller wrappers
+export 'src/utils/controllers.dart'
+    show
+        SignalTextController,
+        SignalScrollController,
+        ScrollDirection,
+        SignalFocusNode,
+        SignalTabController,
+        SignalPageController;
+
+// Pagination and infinite scroll
+export 'src/utils/pagination.dart'
+    show
+        PaginationState,
+        PaginationConfig,
+        PaginatedSignal,
+        PaginationResult,
+        setupInfiniteScroll,
+        InfiniteScrollList;
+
+// Lifecycle and timers
+export 'src/utils/lifecycle.dart'
+    show
+        appLifecycleSignal,
+        AppLifecycleSignal,
+        intervalSignal,
+        IntervalSignal,
+        countdownSignal,
+        CountdownSignal,
+        stopwatchSignal,
+        StopwatchSignal,
+        frameSignal,
+        FrameSignal,
+        clockSignal,
+        ClockSignal,
+        LifecycleAwareSignalMixin;
+
+// Undo/Redo history
+export 'src/utils/history.dart'
+    show
+        UndoableSignal,
+        HistoryCheckpoint,
+        undoable,
+        UndoableSignalExtension,
+        UndoGroup,
+        UndoTransactionExtension,
+        SaveableSignal;
+
+// Search utilities
+export 'src/utils/search.dart'
+    show
+        SearchState,
+        SearchConfig,
+        SearchSignal,
+        SearchWithSuggestionsSignal,
+        FilterSignal,
+        SortSignal,
+        SortDirection;
+
 // =============================================================================
 // STATE MANAGEMENT EXTENSIONS
 // =============================================================================

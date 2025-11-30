@@ -1,0 +1,110 @@
+name: Reactivity Benchmark
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - 'benchmark/**'
+      - 'packages/void_signals/**'
+      - '.github/workflows/benchmark.yml'
+  pull_request:
+    branches: ["main"]
+    paths:
+      - 'benchmark/**'
+      - 'packages/void_signals/**'
+  schedule:
+    # Run daily at midnight UTC
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Run benchmark script
+        working-directory: benchmark
+        run: |
+          chmod +x bench.sh
+          ./bench.sh
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: benchmark/bench/
+          retention-days: 30
+
+      - name: Display summary
+        run: |
+          echo "## Benchmark Results" >> $GITHUB_STEP_SUMMARY
+          cat benchmark/bench/BENCHMARK_REPORT.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Commit benchmark results
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add benchmark/bench/ benchmark/README.md README.md README_CN.md
+          git diff --staged --quiet || git commit -m "📊 Update benchmark results [skip ci]"
+          git push
+
+      - name: Comment on PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = 'benchmark/bench/BENCHMARK_REPORT.md';
+            
+            if (fs.existsSync(reportPath)) {
+              const report = fs.readFileSync(reportPath, 'utf8');
+              
+              let comment = '## Benchmark Results\n\n';
+              comment += report;
+              
+              // Find existing comment
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+              });
+              
+              const botComment = comments.find(c => 
+                c.user.type === 'Bot' && c.body.includes('## Benchmark Results')
+              );
+              
+              if (botComment) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: botComment.id,
+                  body: comment,
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body: comment,
+                });
+              }
+            }

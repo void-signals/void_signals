@@ -1,0 +1,11 @@
+name: benchmark_signals_core
+description: Benchmark for signals_core
+publish_to: none
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  reactivity_benchmark:
+    path: ../..
+  signals_core: any

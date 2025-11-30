@@ -1,11 +1,23 @@
-# void_signals_lint
+<p align="center">
+  <img src="https://raw.githubusercontent.com/void-signals/void-signals/main/art/void.png" alt="void_signals logo" width="180" />
+</p>
 
-[![pub package](https://img.shields.io/pub/v/void_signals_lint.svg)](https://pub.dev/packages/void_signals_lint)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+<h1 align="center">void_signals_lint</h1>
 
-English | [简体中文](README_CN.md)
+<p align="center">
+  Production-grade custom lint rules for <a href="https://pub.dev/packages/void_signals">void_signals</a>, <a href="https://pub.dev/packages/void_signals_flutter">void_signals_flutter</a>, and <a href="https://pub.dev/packages/void_signals_hooks">void_signals_hooks</a>.
+</p>
 
-Production-grade custom lint rules for [void_signals](https://pub.dev/packages/void_signals), [void_signals_flutter](https://pub.dev/packages/void_signals_flutter), and [void_signals_hooks](https://pub.dev/packages/void_signals_hooks).
+<p align="center">
+  <a href="https://pub.dev/packages/void_signals_lint"><img src="https://img.shields.io/pub/v/void_signals_lint.svg" alt="pub package" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
+</p>
+
+<p align="center">
+  English | <a href="README_CN.md">简体中文</a>
+</p>
+
+---
 
 This package provides comprehensive static analysis to help you write better code using void_signals, catching common mistakes, enforcing best practices, and providing **quick fixes** for most issues.
 

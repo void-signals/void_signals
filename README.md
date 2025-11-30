@@ -1,11 +1,23 @@
-# void_signals
+<p align="center">
+  <img src="art/void.png" alt="void_signals logo" width="180" />
+</p>
 
-A high-performance signal reactivity library for Dart and Flutter, based on [alien-signals](https://github.com/stackblitz/alien-signals).
+<h1 align="center">void_signals</h1>
 
-[![Pub Version](https://img.shields.io/pub/v/void_signals)](https://pub.dev/packages/void_signals)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+<p align="center">
+  A high-performance signal reactivity library for Dart and Flutter, based on <a href="https://github.com/stackblitz/alien-signals">alien-signals</a>.
+</p>
 
-English | [简体中文](README_CN.md)
+<p align="center">
+  <a href="https://pub.dev/packages/void_signals"><img src="https://img.shields.io/pub/v/void_signals" alt="Pub Version" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT" /></a>
+</p>
+
+<p align="center">
+  English | <a href="README_CN.md">简体中文</a>
+</p>
+
+---
 
 ## Features
 
@@ -23,6 +35,8 @@ English | [简体中文](README_CN.md)
 | [void_signals](packages/void_signals/) | Core reactive primitives for Dart |
 | [void_signals_flutter](packages/void_signals_flutter/) | Flutter bindings and widgets |
 | [void_signals_hooks](packages/void_signals_hooks/) | Flutter hooks integration |
+| [void_signals_lint](packages/void_signals_lint/) | Custom lint rules |
+| [void_signals_devtools_extension](packages/void_signals_devtools_extension/) | DevTools extension |
 
 ## Quick Start
 
@@ -33,6 +47,10 @@ dependencies:
   void_signals: ^1.0.0
   void_signals_flutter: ^1.0.0  # For Flutter
   void_signals_hooks: ^1.0.0    # For flutter_hooks users
+
+dev_dependencies:
+  void_signals_lint: ^1.0.0     # Custom lint rules
+  custom_lint: ^0.8.0           # Required for lint rules
 ```
 
 ### Basic Usage
@@ -71,7 +89,7 @@ class CounterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obs(() => Column(
+    return Watch(builder: (context, _) => Column(
       children: [
         Text('Count: ${counter.value}'),
         ElevatedButton(
@@ -178,6 +196,27 @@ void_signals is built on alien-signals, which is one of the fastest signal imple
 - **Lazy evaluation** for computed values
 - **Efficient dependency tracking** with O(1) operations
 - **Minimal memory allocations** through object pooling
+
+### Benchmark Results
+
+We run comprehensive benchmarks comparing void_signals against other popular reactive libraries. The benchmarks are automatically run on every push to the main branch.
+
+📊 **[View Latest Benchmark Report](benchmark/bench/BENCHMARK_REPORT.md)**
+
+<!-- BENCHMARK_SUMMARY_START -->
+| Rank | Framework | Wins | Pass Rate |
+|------|-----------|------|-----------|
+| 🥇 | void_signals | 19 | 100% |
+| 🥈 | alien_signals | 18 | 100% |
+| 🥉 | preact_signals | 2 | 100% |
+<!-- BENCHMARK_SUMMARY_END -->
+
+The benchmarks include tests for:
+- Propagation patterns (deep, broad, diamond, triangle)
+- Dynamic dependencies
+- Cell-based reactivity
+- Computed value chains
+- Signal creation and updates
 
 ## Contributing
 

@@ -1,0 +1,11 @@
+name: benchmark_solidart
+description: Benchmark for solidart
+publish_to: none
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  reactivity_benchmark:
+    path: ../..
+  solidart: any

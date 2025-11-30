@@ -1,0 +1,11 @@
+name: benchmark_mobx
+description: Benchmark for mobx
+publish_to: none
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  reactivity_benchmark:
+    path: ../..
+  mobx: any

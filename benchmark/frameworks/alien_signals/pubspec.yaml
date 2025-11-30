@@ -1,0 +1,11 @@
+name: benchmark_alien_signals
+description: Benchmark for alien_signals
+publish_to: none
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  reactivity_benchmark:
+    path: ../..
+  alien_signals: any

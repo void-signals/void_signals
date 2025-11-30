@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:void_signals_flutter/void_signals_flutter.dart';
 
@@ -9,6 +7,11 @@ import '../widgets/package_card.dart';
 import 'package_detail_page.dart';
 
 /// Search page with real-time search
+///
+/// Demonstrates usage of:
+/// - [SignalTextController] for reactive text input
+/// - [SignalFocusNode] for reactive focus state
+/// - [debounced] for debouncing search queries
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
 
@@ -17,23 +20,49 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final _controller = TextEditingController();
-  final _focusNode = FocusNode();
-  Timer? _debounceTimer;
+  // Use SignalTextController for reactive text input
+  late final SignalTextController _searchController;
+
+  // Use SignalFocusNode for reactive focus state
+  late final SignalFocusNode _focusNode;
+
+  // Debounced search query - waits 500ms after typing stops
+  late final TimedSignal<String> _debouncedQuery;
+
+  // Effect to trigger search when debounced query changes
+  Effect? _searchEffect;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize reactive controllers
+    _searchController = SignalTextController();
+    _focusNode = SignalFocusNode(debugLabel: 'SearchField');
+
+    // Create debounced signal from the text input
+    _debouncedQuery = debounced(
+      _searchController.text,
+      const Duration(milliseconds: 500),
+    );
+
+    // Schedule effect setup for after first frame to avoid build conflicts
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _searchEffect = effect(() {
+        final query = _debouncedQuery.value;
+        searchState.search(query);
+      });
+    });
+  }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _searchEffect?.stop();
+    _debouncedQuery.dispose();
+    _searchController.dispose();
     _focusNode.dispose();
-    _debounceTimer?.cancel();
     super.dispose();
-  }
-
-  void _onSearchChanged(String value) {
-    _debounceTimer?.cancel();
-    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-      searchState.search(value);
-    });
   }
 
   @override
@@ -67,21 +96,22 @@ class _SearchPageState extends State<SearchPage> {
                       16,
                     ),
                     child: SearchBar(
-                      controller: _controller,
-                      focusNode: _focusNode,
+                      controller: _searchController.controller,
+                      focusNode: _focusNode.focusNode,
                       hintText: 'Search packages...',
                       leading: const Padding(
                         padding: EdgeInsets.only(left: 8),
                         child: Icon(Icons.search),
                       ),
                       trailing: [
+                        // React to text changes using SignalTextController
                         Watch(
                           builder: (context, child) {
-                            if (searchState.query.value.isNotEmpty) {
+                            if (_searchController.isNotEmpty.value) {
                               return IconButton(
                                 icon: const Icon(Icons.clear),
                                 onPressed: () {
-                                  _controller.clear();
+                                  _searchController.clear();
                                   searchState.clear();
                                 },
                                 tooltip: 'Clear search',
@@ -91,7 +121,6 @@ class _SearchPageState extends State<SearchPage> {
                           },
                         ),
                       ],
-                      onChanged: _onSearchChanged,
                       onSubmitted: (value) => searchState.search(value),
                     ),
                   ),
@@ -113,7 +142,7 @@ class _SearchPageState extends State<SearchPage> {
                       child: _SearchSuggestions(
                         padding: padding,
                         onSelect: (query) {
-                          _controller.text = query;
+                          _searchController.text.value = query;
                           searchState.search(query);
                         },
                       ),
@@ -239,7 +268,7 @@ class _SearchPageState extends State<SearchPage> {
           ),
           sliver: SliverGrid(
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 320,
+              maxCrossAxisExtent: 360,
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
               mainAxisExtent: 200,

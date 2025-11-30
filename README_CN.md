@@ -1,11 +1,23 @@
-# void_signals
+<p align="center">
+  <img src="art/void.png" alt="void_signals logo" width="180" />
+</p>
 
-基于 [alien-signals](https://github.com/stackblitz/alien-signals) 的高性能 Dart/Flutter 信号响应式库。
+<h1 align="center">void_signals</h1>
 
-[![Pub Version](https://img.shields.io/pub/v/void_signals)](https://pub.dev/packages/void_signals)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+<p align="center">
+  基于 <a href="https://github.com/stackblitz/alien-signals">alien-signals</a> 的高性能 Dart/Flutter 信号响应式库。
+</p>
 
-[English](README.md) | 简体中文
+<p align="center">
+  <a href="https://pub.dev/packages/void_signals"><img src="https://img.shields.io/pub/v/void_signals" alt="Pub Version" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT" /></a>
+</p>
+
+<p align="center">
+  <a href="README.md">English</a> | 简体中文
+</p>
+
+---
 
 ## 特性
 
@@ -24,6 +36,7 @@
 | [void_signals_flutter](packages/void_signals_flutter/) | Flutter 绑定和 Widget |
 | [void_signals_hooks](packages/void_signals_hooks/) | Flutter hooks 集成 |
 | [void_signals_lint](packages/void_signals_lint/) | 自定义 lint 规则 |
+| [void_signals_devtools_extension](packages/void_signals_devtools_extension/) | DevTools 扩展 |
 
 ## 快速开始
 
@@ -179,6 +192,27 @@ void_signals 基于 alien-signals 构建，是目前最快的信号实现之一�
 - **惰性求值** 用于计算值
 - **高效依赖追踪** O(1) 操作
 - **最小内存分配** 通过对象池
+
+### 基准测试结果
+
+我们运行全面的基准测试，将 void_signals 与其他流行的响应式库进行比较。基准测试在每次推送到主分支时自动运行。
+
+📊 **[查看最新基准测试报告](benchmark/bench/BENCHMARK_REPORT.md)**
+
+<!-- BENCHMARK_SUMMARY_START -->
+| 排名 | 框架 | 获胜数 | 通过率 |
+|------|------|--------|--------|
+| 🥇 | void_signals | 19 | 100% |
+| 🥈 | alien_signals | 18 | 100% |
+| 🥉 | preact_signals | 2 | 100% |
+<!-- BENCHMARK_SUMMARY_END -->
+
+基准测试包括：
+- 传播模式（深度、广度、菱形、三角形）
+- 动态依赖
+- 单元格响应性
+- 计算值链
+- 信号创建和更新
 
 ## 贡献
 

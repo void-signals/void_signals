@@ -1,11 +1,23 @@
-# void_signals_hooks
+<p align="center">
+  <img src="https://raw.githubusercontent.com/void-signals/void-signals/main/art/void.png" alt="void_signals logo" width="180" />
+</p>
 
-[void_signals](https://pub.dev/packages/void_signals) 的 Flutter hooks 集成 - 使用响应式信号与 flutter_hooks。
+<h1 align="center">void_signals_hooks</h1>
 
-[![Pub Version](https://img.shields.io/pub/v/void_signals_hooks)](https://pub.dev/packages/void_signals_hooks)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+<p align="center">
+  <a href="https://pub.dev/packages/void_signals">void_signals</a> 的 Flutter hooks 集成 - 使用响应式信号与 flutter_hooks。
+</p>
 
-[English](README.md) | 简体中文
+<p align="center">
+  <a href="https://pub.dev/packages/void_signals_hooks"><img src="https://img.shields.io/pub/v/void_signals_hooks" alt="Pub Version" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT" /></a>
+</p>
+
+<p align="center">
+  <a href="README.md">English</a> | 简体中文
+</p>
+
+---
 
 ## 特性
 
@@ -255,6 +267,163 @@ final (current, previous) = usePrevious(count);
 
 // current.value: 5
 // previous.value: 4（如果是第一个值则为 null）
+```
+
+## 异步 Hooks
+
+### useAsync
+
+处理异步操作的 Hook，支持手动执行控制。
+
+```dart
+final (state, execute, reset) = useAsync<User>();
+
+// 执行异步操作
+void loadUser() async {
+  await execute(() async {
+    await Future.delayed(Duration(seconds: 1));
+    return User(name: '张三', age: 30);
+  });
+}
+
+// 使用模式匹配处理状态
+state.when(
+  idle: () => const Text('点击按钮加载'),
+  loading: () => const CircularProgressIndicator(),
+  success: (user) => Text('你好, ${user.name}'),
+  error: (error) => Text('错误: $error'),
+);
+
+// 重置为空闲状态
+reset();
+```
+
+### useAsyncData
+
+自动执行异步操作的 Hook，支持依赖键。
+
+```dart
+// userId 变化时自动重新执行
+final state = useAsyncData(
+  () async {
+    final response = await api.fetchUser(userId);
+    return response;
+  },
+  keys: [userId],
+);
+
+// 使用 maybeWhen 进行部分处理
+state.maybeWhen(
+  success: (user) => UserCard(user: user),
+  orElse: () => const LoadingPlaceholder(),
+);
+```
+
+### useLatest
+
+获取最新值的引用，不会订阅变化。
+
+```dart
+final count = useSignal(0);
+final latestRef = useLatest(count);
+
+// 在回调中访问最新值而不触发重建
+void handleClick() {
+  print('当前计数: ${latestRef.value}');
+}
+```
+
+### useListener
+
+监听信号变化执行副作用。
+
+```dart
+final count = useSignal(0);
+
+useListener(
+  count,
+  (value) {
+    print('计数变为: $value');
+    analytics.log('count_changed', value);
+  },
+  fireImmediately: true,  // 立即用当前值触发
+);
+```
+
+## 状态 Hooks
+
+### useToggle
+
+简单的布尔开关 Hook。
+
+```dart
+final (isOn, toggle, setOn, setOff) = useToggle(false);
+
+// 切换值
+toggle();
+
+// 设置特定值
+setOn();   // 设为 true
+setOff();  // 设为 false
+```
+
+### useCounter
+
+计数器 Hook，支持增加、减少、重置和设值。
+
+```dart
+final (count, increment, decrement, reset, setValue) = useCounter(
+  initialValue: 0,
+  step: 1,
+  min: 0,
+  max: 100,
+);
+
+increment();     // 计数 + step
+decrement();     // 计数 - step
+reset();         // 回到初始值
+setValue(50);    // 设置特定值
+```
+
+## 定时器 Hooks
+
+### useInterval
+
+定期运行回调。
+
+```dart
+// 每秒运行一次
+useInterval(
+  () {
+    fetchNewMessages();
+  },
+  Duration(seconds: 1),
+);
+
+// 传入 null 回调来暂停
+useInterval(
+  isPaused ? null : () => tick(),
+  Duration(seconds: 1),
+);
+```
+
+### useTimeout
+
+延迟后运行回调。
+
+```dart
+final (isActive, cancel, restart) = useTimeout(
+  () {
+    showNotification('时间到!');
+  },
+  Duration(seconds: 5),
+);
+
+// 取消超时
+cancel();
+
+// 重新开始超时
+restart();
 ```
 
 ## 集合 Hooks

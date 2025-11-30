@@ -91,8 +91,16 @@ doc/api/
 .flutter-plugins
 .flutter-plugins-dependencies
 
-
+# IDE
+.idea/
 *.iml
+*_test
+
+# Temporary files
 AGENTS.md
 
-.idea
+# Ignore bench folder at root level only (not benchmark/bench/ which stores results)
+/bench/
+
+/post_notify
+

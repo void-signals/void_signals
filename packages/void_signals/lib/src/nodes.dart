@@ -2,264 +2,248 @@ import 'flags.dart';
 
 /// A link connecting a dependency to a subscriber in the reactive graph.
 ///
-/// [Link] is the fundamental building block of the reactive dependency graph.
-/// It connects a dependency node (what is being watched) to a subscriber node
-/// (what is watching). Links form a bidirectional doubly-linked list structure
-/// for efficient traversal and cleanup.
+/// Links form a doubly-linked list structure that enables efficient dependency
+/// tracking and propagation in the reactive system. The compact memory layout
+/// groups related fields together to improve cache locality.
 ///
-/// Uses class fields instead of Map/List for better performance.
-/// Field order is optimized for cache locality - hot fields first.
+/// Each link maintains pointers for both:
+/// - The dependency chain (in the subscriber's dependency list)
+/// - The subscriber chain (in the dependency's subscriber list)
 ///
 /// Example:
 /// ```dart
-/// // Links are created automatically when you access a signal in a reactive context
+/// // Links are created internally when signals are accessed in effects
 /// final count = signal(0);
 /// effect(() {
-///   // This creates a link between 'count' (dependency) and the effect (subscriber)
-///   print(count.value);
+///   print(count.value); // Creates a link from count to this effect
 /// });
 /// ```
 @pragma('vm:isolate-unsendable')
+@pragma('vm:entry-point')
 final class Link {
-  /// Creates a new link between a dependency and subscriber.
-  Link({
-    required this.dep,
-    required this.sub,
-    required this.version,
-    this.prevDep,
-    this.nextDep,
-    this.prevSub,
-    this.nextSub,
-  });
+  @pragma('vm:prefer-inline')
+  Link(this.dep, this.sub, this.version);
 
-  // Hot fields - accessed frequently together
+  /// The dependency node being subscribed to.
   final ReactiveNode dep;
+
+  /// The subscriber node that depends on [dep].
   final ReactiveNode sub;
+
+  /// Version number used to detect stale links.
   int version;
 
-  // Traversal fields
+  /// Next link in the subscriber's dependency list.
   Link? nextDep;
+
+  /// Previous link in the subscriber's dependency list.
   Link? prevDep;
+
+  /// Next link in the dependency's subscriber list.
   Link? nextSub;
+
+  /// Previous link in the dependency's subscriber list.
   Link? prevSub;
 }
 
-/// Stack node for non-recursive graph traversal.
+/// A stack node for non-recursive graph traversal.
 ///
-/// [Stack] is an immutable linked list used internally for iterative
-/// (non-recursive) traversal of the reactive graph. This avoids stack
-/// overflow issues with deeply nested dependency chains.
-///
-/// Example:
-/// ```dart
-/// // Internal usage pattern:
-/// Stack<Link>? stack;
-/// // Push a value
-/// stack = Stack(value: link, prev: stack);
-/// // Pop a value
-/// final top = stack!.value;
-/// stack = stack!.prev;
-/// ```
-@pragma('vm:isolate-unsendable')
-final class Stack<T> {
-  /// Creates a new stack node with the given value and optional previous node.
-  const Stack({required this.value, this.prev});
-
-  /// The value stored in this stack node.
-  final T value;
-
-  /// The previous node in the stack, or null if this is the bottom.
-  final Stack<T>? prev;
-}
-
-/// Base class for all reactive nodes in the graph.
-///
-/// [ReactiveNode] is the abstract base for all nodes in the reactive system:
-/// - [SignalNode]: Holds a mutable value
-/// - [ComputedNode]: Derives a value from other nodes
-/// - [EffectNode]: Executes side effects when dependencies change
-/// - [ScopeNode]: Groups effects for batch disposal
-///
-/// Uses sealed class for pattern matching optimization and exhaustive
-/// switch expressions.
+/// Used internally by the reactive system to traverse dependency graphs
+/// without recursion, avoiding stack overflow for deeply nested dependencies.
 ///
 /// Example:
 /// ```dart
-/// // Pattern matching on node types
-/// void processNode(ReactiveNode node) {
-///   switch (node) {
-///     case SignalNode():
-///       print('Signal with value: ${node.currentValue}');
-///     case ComputedNode():
-///       print('Computed value: ${node.value}');
-///     case EffectNode():
-///       print('Effect node');
-///     case ScopeNode():
-///       print('Scope node');
-///   }
+/// // Internal usage for graph traversal
+/// var stack = Stack(initialValue);
+/// while (stack != null) {
+///   final value = stack.value;
+///   stack = stack.prev;
+///   // Process value...
 /// }
 /// ```
 @pragma('vm:isolate-unsendable')
-sealed class ReactiveNode {
-  /// Creates a reactive node with the given initial flags.
-  ReactiveNode({required this.flags});
+final class Stack<T> {
+  Stack(this.value, [this.prev]);
 
-  // Dependencies (what this node depends on)
-  Link? deps;
-  Link? depsTail;
+  /// The value stored in this stack node.
+  T value;
 
-  // Subscribers (what depends on this node)
-  Link? subs;
-  Link? subsTail;
+  /// Reference to the previous stack node, or null if this is the bottom.
+  Stack<T>? prev;
+}
 
-  // Reactive flags
+/// Base class for all reactive nodes in the signal graph.
+///
+/// [ReactiveNode] provides the fundamental structure for dependency tracking
+/// and subscriber management. It uses a flat structure to avoid unnecessary
+/// virtual method call overhead.
+///
+/// The node maintains:
+/// - [flags]: State flags for tracking dirty/pending/watching status
+/// - [deps]/[depsTail]: Linked list of dependencies
+/// - [subs]/[subsTail]: Linked list of subscribers
+///
+/// Example:
+/// ```dart
+/// // All reactive primitives extend ReactiveNode
+/// final sig = signal(0);      // SignalNode extends ReactiveNode
+/// final comp = computed((_) => sig.value * 2); // ComputedNode extends ReactiveNode
+/// ```
+@pragma('vm:isolate-unsendable')
+@pragma('vm:entry-point')
+abstract class ReactiveNode {
+  ReactiveNode(this.flags);
+
+  /// State flags for this node.
   ReactiveFlags flags;
 
-  @pragma('vm:prefer-inline')
-  @pragma('dart2js:tryInline')
-  @pragma('wasm:prefer-inline')
-  bool get hasDependencies => deps != null;
+  /// Head of the dependency linked list.
+  Link? deps;
 
-  @pragma('vm:prefer-inline')
-  @pragma('dart2js:tryInline')
-  @pragma('wasm:prefer-inline')
-  bool get hasSubscribers => subs != null;
+  /// Tail of the dependency linked list.
+  Link? depsTail;
+
+  /// Head of the subscriber linked list.
+  Link? subs;
+
+  /// Tail of the subscriber linked list.
+  Link? subsTail;
+
+  /// Next effect in the effect queue.
+  ///
+  /// Only used by [EffectNode], but placed in base class to avoid type checks.
+  ReactiveNode? nextEffect;
 }
 
-/// Signal node - holds a mutable value.
+/// A signal node that holds a mutable value.
 ///
-/// [SignalNode] is the internal representation of a [Signal]. It stores:
-/// - [currentValue]: The value that subscribers see
-/// - [pendingValue]: The new value waiting to be applied
-///
-/// The two-value design enables batched updates where multiple signals
-/// can be changed before notifying subscribers.
+/// [SignalNode] is the underlying node for [Signal] values. It stores both
+/// the current value and a pending value to support batched updates.
 ///
 /// Example:
 /// ```dart
-/// // SignalNode is created internally by signal()
-/// final count = signal(0);  // Creates SignalNode<int>
-///
-/// // Access internals (for debugging/testing only)
-/// final node = (count as dynamic)._node as SignalNode<int>;
-/// print(node.currentValue);  // 0
+/// final node = SignalNode(42);
+/// print(node.currentValue); // 42
+/// node.pendingValue = 100;
+/// node.applyPending(); // Returns true if value changed
+/// print(node.currentValue); // 100
 /// ```
 @pragma('vm:isolate-unsendable')
-final class SignalNode<T> extends ReactiveNode {
-  /// Creates a signal node with the given initial value.
-  SignalNode({required T value})
+@pragma('vm:entry-point')
+base class SignalNode<T> extends ReactiveNode {
+  @pragma('vm:prefer-inline')
+  SignalNode(T value)
       : currentValue = value,
         pendingValue = value,
-        super(flags: ReactiveFlags.mutable);
+        super(ReactiveFlags.mutable);
 
-  /// The current value visible to subscribers.
+  /// The current committed value of the signal.
   T currentValue;
 
-  /// The pending value waiting to be applied during the next flush.
+  /// The pending value waiting to be applied.
   T pendingValue;
-}
 
-/// Computed node - derives value from other signals.
-///
-/// [ComputedNode] is the internal representation of a [Computed] value.
-/// It lazily computes its value from other signals and caches the result
-/// until dependencies change.
-///
-/// Features:
-/// - Lazy evaluation: only computed when accessed
-/// - Cached: returns same value until dependencies change
-/// - Previous value access: getter receives previous value for optimizations
-///
-/// Example:
-/// ```dart
-/// final count = signal(0);
-/// // Creates ComputedNode internally
-/// final doubled = computed((prev) {
-///   print('Previous: $prev'); // null on first run
-///   return count.value * 2;
-/// });
-///
-/// print(doubled.value); // Computes: 0
-/// print(doubled.value); // Cached: 0 (no recomputation)
-/// count.value = 5;
-/// print(doubled.value); // Recomputes: 10
-/// ```
-@pragma('vm:isolate-unsendable')
-final class ComputedNode<T> extends ReactiveNode {
-  /// Creates a computed node with the given getter function.
-  ComputedNode({required T Function(T? previousValue) getter})
-      : _getter = getter,
-        super(flags: ReactiveFlags.none);
-
-  /// The cached computed value, or null if not yet computed.
-  T? value;
-
-  /// The getter function that computes the value.
-  final T Function(T? previousValue) _getter;
-
+  /// Applies the pending value and returns whether the value changed.
+  ///
+  /// Returns `true` if [pendingValue] differs from [currentValue],
+  /// `false` otherwise. After calling, [currentValue] equals [pendingValue].
   @pragma('vm:prefer-inline')
   @pragma('dart2js:tryInline')
   @pragma('wasm:prefer-inline')
-  T compute(T? prev) => _getter(prev);
+  bool applyPending() {
+    flags = ReactiveFlags.mutable;
+    final old = currentValue;
+    return !identical(old, currentValue = pendingValue);
+  }
 }
 
-/// Effect node - side effect that runs when dependencies change.
+/// A computed node that derives its value from other reactive sources.
 ///
-/// [EffectNode] is the internal representation of an [Effect]. It automatically
-/// tracks dependencies accessed during execution and re-runs when any of those
-/// dependencies change.
-///
-/// Effects are ideal for:
-/// - Logging and debugging
-/// - Synchronizing with external systems
-/// - Triggering side effects like API calls
-/// - Updating non-reactive state
+/// [ComputedNode] lazily evaluates its getter function and caches the result.
+/// The cached value is invalidated when any dependency changes.
 ///
 /// Example:
 /// ```dart
-/// final user = signal<User?>(null);
-///
-/// // Creates EffectNode internally
-/// final eff = effect(() {
-///   final u = user.value;
-///   if (u != null) {
-///     // Side effect: update analytics
-///     analytics.setUserId(u.id);
-///   }
-/// });
-///
-/// // Later: stop listening
-/// eff.stop();
+/// final countNode = SignalNode(5);
+/// final doubledNode = ComputedNode((prev) => countNode.currentValue * 2);
+/// print(doubledNode.cachedValue); // null (not yet computed)
+/// doubledNode.recompute();
+/// print(doubledNode.cachedValue); // 10
 /// ```
 @pragma('vm:isolate-unsendable')
-final class EffectNode extends ReactiveNode {
-  /// Creates an effect node with the given effect function.
-  EffectNode({required this.fn})
-      : super(flags: ReactiveFlags.watching | ReactiveFlags.recursedCheck);
+@pragma('vm:entry-point')
+base class ComputedNode<T> extends ReactiveNode {
+  @pragma('vm:prefer-inline')
+  ComputedNode(this.getter) : super(ReactiveFlags.none);
 
-  /// The function to execute when dependencies change.
+  /// The getter function that computes the value.
+  ///
+  /// Receives the previous cached value (or null if never computed).
+  final T Function(T?) getter;
+
+  /// Internal cached value. Use [cachedValue] to access.
+  T? _cachedValue;
+
+  /// Gets the cached value without triggering recomputation.
+  ///
+  /// Returns `null` if the computed has never been evaluated.
+  T? get cachedValue => _cachedValue;
+
+  /// Sets the cached value. Used internally by the reactive system.
+  set cachedValue(T? value) => _cachedValue = value;
+
+  /// Recomputes the value and returns whether it changed.
+  ///
+  /// Calls [getter] with the previous cached value and stores the result.
+  /// Returns `true` if the new value differs from the old value.
+  @pragma('vm:prefer-inline')
+  @pragma('dart2js:tryInline')
+  @pragma('wasm:prefer-inline')
+  bool recompute() {
+    final old = _cachedValue;
+    return !identical(old, _cachedValue = getter(old));
+  }
+}
+
+/// An effect node that reacts to dependency changes.
+///
+/// [EffectNode] wraps a side-effect function that runs automatically
+/// when any of its tracked dependencies change.
+///
+/// Example:
+/// ```dart
+/// final node = EffectNode(() {
+///   print('Effect triggered!');
+/// });
+/// // The effect function is stored in node.fn
+/// node.fn(); // Manually invoke: prints "Effect triggered!"
+/// ```
+@pragma('vm:isolate-unsendable')
+@pragma('vm:entry-point')
+final class EffectNode extends ReactiveNode {
+  @pragma('vm:prefer-inline')
+  EffectNode(this.fn)
+      : super(6 as ReactiveFlags /* watching | recursedCheck */);
+
+  /// The side-effect function to execute when dependencies change.
   final void Function() fn;
 }
 
-/// Scope node - manages a group of effects.
+/// A scope node that manages a group of effects.
 ///
-/// [ScopeNode] is the internal representation of an [EffectScope]. It groups
-/// related effects together so they can be disposed as a unit. This is
-/// particularly useful for cleanup when a component or feature is destroyed.
+/// [ScopeNode] allows grouping multiple effects together for collective
+/// lifecycle management. When the scope is stopped, all effects within
+/// it are also stopped.
 ///
 /// Example:
 /// ```dart
-/// // Creates ScopeNode internally
-/// final scope = effectScope(() {
-///   effect(() => print('Effect 1: ${count.value}'));
-///   effect(() => print('Effect 2: ${name.value}'));
-/// });
-///
-/// // Later: stop all effects in the scope at once
-/// scope.stop();
+/// final scope = ScopeNode();
+/// // Effects created within this scope will be tracked
+/// // When scope is stopped, all tracked effects are cleaned up
 /// ```
 @pragma('vm:isolate-unsendable')
+@pragma('vm:entry-point')
 final class ScopeNode extends ReactiveNode {
-  /// Creates a new scope node for managing a group of effects.
-  ScopeNode() : super(flags: ReactiveFlags.none);
+  @pragma('vm:prefer-inline')
+  ScopeNode() : super(ReactiveFlags.none);
 }

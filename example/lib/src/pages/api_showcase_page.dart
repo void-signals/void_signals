@@ -141,6 +141,26 @@ class _ApiShowcasePageState extends State<ApiShowcasePage> {
           SizedBox(height: 24),
           _SectionTitle('combineAsync - Combine Async Values'),
           _CombineAsyncDemo(),
+          SizedBox(height: 24),
+          _SectionTitle('Flutter Utilities'),
+          SizedBox(height: 8),
+          _SectionTitle('SignalTextController'),
+          _SignalTextControllerDemo(),
+          SizedBox(height: 24),
+          _SectionTitle('SignalScrollController'),
+          _SignalScrollControllerDemo(),
+          SizedBox(height: 24),
+          _SectionTitle('SignalPageController'),
+          _SignalPageControllerDemo(),
+          SizedBox(height: 24),
+          _SectionTitle('PaginatedSignal'),
+          _PaginatedSignalDemo(),
+          SizedBox(height: 24),
+          _SectionTitle('UndoableSignal'),
+          _UndoableSignalDemo(),
+          SizedBox(height: 24),
+          _SectionTitle('SearchSignal'),
+          _SearchSignalDemo(),
           SizedBox(height: 100),
         ],
       ),
@@ -160,9 +180,9 @@ class _SectionTitle extends StatelessWidget {
       child: Text(
         title,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.primary,
-        ),
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary,
+            ),
       ),
     );
   }
@@ -401,11 +421,10 @@ class _SignalBuilderDemoState extends State<_SignalBuilderDemo> {
               SignalBuilder<int>(
                 signal: counter,
                 child: const Icon(Icons.favorite, color: Colors.red),
-                builder:
-                    (ctx, value, child) => Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [child!, Text(' $value likes')],
-                    ),
+                builder: (ctx, value, child) => Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [child!, Text(' $value likes')],
+                ),
               ),
               const Spacer(),
               IconButton(
@@ -450,9 +469,8 @@ class _ComputedBuilderDemoState extends State<_ComputedBuilderDemo> {
               ),
               const Spacer(),
               IconButton(
-                onPressed:
-                    () =>
-                        items.value = [...items.value, items.value.length + 1],
+                onPressed: () =>
+                    items.value = [...items.value, items.value.length + 1],
                 icon: const Icon(Icons.add),
               ),
             ],
@@ -556,17 +574,14 @@ class _EffectDemoState extends State<_EffectDemo> {
             ],
           ),
           Watch(
-            builder:
-                (ctx, _) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children:
-                      logs.value
-                          .map(
-                            (log) =>
-                                Text(log, style: const TextStyle(fontSize: 12)),
-                          )
-                          .toList(),
-                ),
+            builder: (ctx, _) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: logs.value
+                  .map(
+                    (log) => Text(log, style: const TextStyle(fontSize: 12)),
+                  )
+                  .toList(),
+            ),
           ),
         ],
       ),
@@ -616,10 +631,9 @@ class _BatchDemoState extends State<_BatchDemo> {
           const Text('batch() groups multiple updates into one effect run'),
           const SizedBox(height: 12),
           Watch(
-            builder:
-                (ctx, _) => Text(
-                  'a=${a.value}, b=${b.value}, effect ran ${effectCount.value} times',
-                ),
+            builder: (ctx, _) => Text(
+              'a=${a.value}, b=${b.value}, effect ran ${effectCount.value} times',
+            ),
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -682,12 +696,10 @@ class _SignalListDemoState extends State<_SignalListDemo> {
           const Text('SignalList provides reactive list operations'),
           const SizedBox(height: 12),
           Watch(
-            builder:
-                (ctx, _) => Wrap(
-                  spacing: 8,
-                  children:
-                      items.map((item) => Chip(label: Text(item))).toList(),
-                ),
+            builder: (ctx, _) => Wrap(
+              spacing: 8,
+              children: items.map((item) => Chip(label: Text(item))).toList(),
+            ),
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -739,31 +751,24 @@ class _SignalMapDemoState extends State<_SignalMapDemo> {
           const Text('SignalMap provides reactive map operations'),
           const SizedBox(height: 12),
           Watch(
-            builder:
-                (ctx, _) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children:
-                      settings.keys
-                          .map((k) => Text('$k: ${settings[k]}'))
-                          .toList(),
-                ),
+            builder: (ctx, _) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children:
+                  settings.keys.map((k) => Text('$k: ${settings[k]}')).toList(),
+            ),
           ),
           const SizedBox(height: 8),
           Row(
             children: [
               ElevatedButton(
-                onPressed:
-                    () =>
-                        settings['theme'] =
-                            settings['theme'] == 'dark' ? 'light' : 'dark',
+                onPressed: () => settings['theme'] =
+                    settings['theme'] == 'dark' ? 'light' : 'dark',
                 child: const Text('Toggle Theme'),
               ),
               const SizedBox(width: 8),
               ElevatedButton(
-                onPressed:
-                    () =>
-                        settings['fontSize'] =
-                            (settings['fontSize'] as int) + 1,
+                onPressed: () =>
+                    settings['fontSize'] = (settings['fontSize'] as int) + 1,
                 child: const Text('Increase Font'),
               ),
             ],
@@ -796,24 +801,21 @@ class _SignalSetDemoState extends State<_SignalSetDemo> {
           const Text('SignalSet provides reactive set operations'),
           const SizedBox(height: 12),
           Watch(
-            builder:
-                (ctx, _) => Wrap(
-                  spacing: 8,
-                  children:
-                      [1, 2, 3, 4, 5].map((n) {
-                        final isSelected = selected.contains(n);
-                        return FilterChip(
-                          label: Text('$n'),
-                          selected: isSelected,
-                          onSelected: (_) => selected.toggle(n),
-                        );
-                      }).toList(),
-                ),
+            builder: (ctx, _) => Wrap(
+              spacing: 8,
+              children: [1, 2, 3, 4, 5].map((n) {
+                final isSelected = selected.contains(n);
+                return FilterChip(
+                  label: Text('$n'),
+                  selected: isSelected,
+                  onSelected: (_) => selected.toggle(n),
+                );
+              }).toList(),
+            ),
           ),
           Watch(
-            builder:
-                (ctx, _) =>
-                    Text('Selected: ${selected.value.toList().join(", ")}'),
+            builder: (ctx, _) =>
+                Text('Selected: ${selected.value.toList().join(", ")}'),
           ),
         ],
       ),
@@ -969,10 +971,9 @@ class _CombinatorsDemoState extends State<_CombinatorsDemo> {
             builder: (ctx, _) => Text('combine2(a, b, +) = ${combined.value}'),
           ),
           Watch(
-            builder:
-                (ctx, _) => Text(
-                  'withPrevious: current=${current.value}, prev=${previous.value ?? "null"}',
-                ),
+            builder: (ctx, _) => Text(
+              'withPrevious: current=${current.value}, prev=${previous.value ?? "null"}',
+            ),
           ),
           const SizedBox(height: 8),
           Row(
@@ -1023,23 +1024,21 @@ class _SignalFieldDemoState extends State<_SignalFieldDemo> {
           const SizedBox(height: 12),
           SignalFieldBuilder<String>(
             field: emailField,
-            builder:
-                (ctx, value, error, field) => TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    errorText: error,
-                    isDense: true,
-                  ),
-                  onChanged: (v) => field.value = v,
-                ),
+            builder: (ctx, value, error, field) => TextField(
+              decoration: InputDecoration(
+                labelText: 'Email',
+                errorText: error,
+                isDense: true,
+              ),
+              onChanged: (v) => field.value = v,
+            ),
           ),
           const SizedBox(height: 8),
           Row(
             children: [
               Watch(
-                builder:
-                    (ctx, _) =>
-                        Text('Valid: ${emailField.isValid ? "✅" : "❌"}'),
+                builder: (ctx, _) =>
+                    Text('Valid: ${emailField.isValid ? "✅" : "❌"}'),
               ),
               const Spacer(),
               ElevatedButton(
@@ -1092,36 +1091,34 @@ class _FormSignalDemoState extends State<_FormSignalDemo> {
           const SizedBox(height: 12),
           SignalFieldBuilder<String>(
             field: form.field<String>('username')!,
-            builder:
-                (ctx, value, error, field) => TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Username',
-                    errorText: error,
-                    isDense: true,
-                  ),
-                  onChanged: (v) => field.value = v,
-                ),
+            builder: (ctx, value, error, field) => TextField(
+              decoration: InputDecoration(
+                labelText: 'Username',
+                errorText: error,
+                isDense: true,
+              ),
+              onChanged: (v) => field.value = v,
+            ),
           ),
           const SizedBox(height: 8),
           SignalFieldBuilder<String>(
             field: form.field<String>('password')!,
-            builder:
-                (ctx, value, error, field) => TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    errorText: error,
-                    isDense: true,
-                  ),
-                  obscureText: true,
-                  onChanged: (v) => field.value = v,
-                ),
+            builder: (ctx, value, error, field) => TextField(
+              decoration: InputDecoration(
+                labelText: 'Password',
+                errorText: error,
+                isDense: true,
+              ),
+              obscureText: true,
+              onChanged: (v) => field.value = v,
+            ),
           ),
           const SizedBox(height: 8),
           Row(
             children: [
               Watch(
-                builder:
-                    (ctx, _) => Text('Form valid: ${form.isValid ? "✅" : "❌"}'),
+                builder: (ctx, _) =>
+                    Text('Form valid: ${form.isValid ? "✅" : "❌"}'),
               ),
               const Spacer(),
               ElevatedButton(
@@ -1186,23 +1183,21 @@ class _AsyncValueDemoState extends State<_AsyncValueDemo> {
           const Text('AsyncValue represents loading/data/error states'),
           const SizedBox(height: 12),
           Watch(
-            builder:
-                (ctx, _) => data.value.when(
-                  loading:
-                      () => const Row(
-                        children: [
-                          SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                          SizedBox(width: 8),
-                          Text('Loading...'),
-                        ],
-                      ),
-                  data: (value) => Text('✅ $value'),
-                  error: (error, _) => Text('❌ Error: $error'),
-                ),
+            builder: (ctx, _) => data.value.when(
+              loading: () => const Row(
+                children: [
+                  SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                  SizedBox(width: 8),
+                  Text('Loading...'),
+                ],
+              ),
+              data: (value) => Text('✅ $value'),
+              error: (error, _) => Text('❌ Error: $error'),
+            ),
           ),
           const SizedBox(height: 8),
           ElevatedButton(
@@ -1349,10 +1344,9 @@ class _ModifyDemoState extends State<_ModifyDemo> {
           const Text('modify() updates value with a function'),
           const SizedBox(height: 12),
           Watch(
-            builder:
-                (ctx, _) => Text(
-                  'User: ${user.value['name']}, Age: ${user.value['age']}',
-                ),
+            builder: (ctx, _) => Text(
+              'User: ${user.value['name']}, Age: ${user.value['age']}',
+            ),
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -1448,21 +1442,19 @@ class _PeekUntrackDemoState extends State<_PeekUntrackDemo> {
           SizedBox(
             height: 80,
             child: Watch(
-              builder:
-                  (ctx, _) => SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children:
-                          logs.value
-                              .map(
-                                (l) => Text(
-                                  l,
-                                  style: const TextStyle(fontSize: 11),
-                                ),
-                              )
-                              .toList(),
-                    ),
-                  ),
+              builder: (ctx, _) => SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: logs.value
+                      .map(
+                        (l) => Text(
+                          l,
+                          style: const TextStyle(fontSize: 11),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
             ),
           ),
         ],
@@ -1548,21 +1540,19 @@ class _EffectScopeDemoState extends State<_EffectScopeDemo> {
           SizedBox(
             height: 100,
             child: Watch(
-              builder:
-                  (ctx, _) => SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children:
-                          logs.value
-                              .map(
-                                (l) => Text(
-                                  l,
-                                  style: const TextStyle(fontSize: 11),
-                                ),
-                              )
-                              .toList(),
-                    ),
-                  ),
+              builder: (ctx, _) => SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: logs.value
+                      .map(
+                        (l) => Text(
+                          l,
+                          style: const TextStyle(fontSize: 11),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
             ),
           ),
         ],
@@ -1711,18 +1701,17 @@ class _AsyncSignalBuilderDemoState extends State<_AsyncSignalBuilderDemo> {
           const SizedBox(height: 12),
           AsyncSignalBuilder<String>(
             signal: dataSignal,
-            loading:
-                (ctx) => const Row(
-                  children: [
-                    SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                    SizedBox(width: 8),
-                    Text('Loading...'),
-                  ],
+            loading: (ctx) => const Row(
+              children: [
+                SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
                 ),
+                SizedBox(width: 8),
+                Text('Loading...'),
+              ],
+            ),
             data: (ctx, value) => Text('✅ $value'),
             error: (ctx, error, stackTrace) => Text('❌ Error: $error'),
           ),
@@ -1768,11 +1757,8 @@ class _MoreExtensionsDemoState extends State<_MoreExtensionsDemo> {
                 child: const Text('add()'),
               ),
               ElevatedButton(
-                onPressed:
-                    () =>
-                        list.value.isNotEmpty
-                            ? list.remove(list.value.last)
-                            : null,
+                onPressed: () =>
+                    list.value.isNotEmpty ? list.remove(list.value.last) : null,
                 child: const Text('remove()'),
               ),
               ElevatedButton(
@@ -1801,8 +1787,8 @@ class _MoreExtensionsDemoState extends State<_MoreExtensionsDemo> {
           const SizedBox(height: 8),
           // Nullable extensions
           Watch(
-            builder:
-                (ctx, _) => Text('Nullable: ${nullable.value ?? "(null)"}'),
+            builder: (ctx, _) =>
+                Text('Nullable: ${nullable.value ?? "(null)"}'),
           ),
           Wrap(
             spacing: 8,
@@ -1971,16 +1957,14 @@ class _SignalTupleDemoState extends State<_SignalTupleDemo> {
           const Text('SignalTuple bundles signals with type-safe access'),
           const SizedBox(height: 12),
           Watch(
-            builder:
-                (ctx, _) => Text(
-                  'x: ${tuple.$1.value}, y: ${tuple.$2.value}, z: ${tuple.$3.value}',
-                ),
+            builder: (ctx, _) => Text(
+              'x: ${tuple.$1.value}, y: ${tuple.$2.value}, z: ${tuple.$3.value}',
+            ),
           ),
           Watch(
-            builder:
-                (ctx, _) => Text(
-                  'Sum: ${tuple.$1.value + tuple.$2.value + tuple.$3.value}',
-                ),
+            builder: (ctx, _) => Text(
+              'Sum: ${tuple.$1.value + tuple.$2.value + tuple.$3.value}',
+            ),
           ),
           const SizedBox(height: 8),
           Row(
@@ -2137,21 +2121,19 @@ class _DistinctUntilChangedDemoState extends State<_DistinctUntilChangedDemo> {
           SizedBox(
             height: 60,
             child: Watch(
-              builder:
-                  (ctx, _) => SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children:
-                          logs.value
-                              .map(
-                                (l) => Text(
-                                  l,
-                                  style: const TextStyle(fontSize: 11),
-                                ),
-                              )
-                              .toList(),
-                    ),
-                  ),
+              builder: (ctx, _) => SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: logs.value
+                      .map(
+                        (l) => Text(
+                          l,
+                          style: const TextStyle(fontSize: 11),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
             ),
           ),
         ],
@@ -2256,10 +2238,9 @@ class _BatchLaterDemoState extends State<_BatchLaterDemo> {
           const Text('batchLater() defers updates to next frame (async batch)'),
           const SizedBox(height: 12),
           Watch(
-            builder:
-                (ctx, _) => Text(
-                  'a=${a.value}, b=${b.value}, effects=${effectCount.value}',
-                ),
+            builder: (ctx, _) => Text(
+              'a=${a.value}, b=${b.value}, effects=${effectCount.value}',
+            ),
           ),
           const SizedBox(height: 8),
           Row(
@@ -2347,10 +2328,9 @@ class _FrameBatchScopeDemoState extends State<_FrameBatchScopeDemo> {
           const Text('FrameBatchScope.update() queues updates for batching'),
           const SizedBox(height: 12),
           Watch(
-            builder:
-                (ctx, _) => Text(
-                  'c1=${counter1.value}, c2=${counter2.value}, batches=${batchCount.value}',
-                ),
+            builder: (ctx, _) => Text(
+              'c1=${counter1.value}, c2=${counter2.value}, batches=${batchCount.value}',
+            ),
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -2459,21 +2439,19 @@ class _SignalObserverDemoState extends State<_SignalObserverDemo> {
           SizedBox(
             height: 60,
             child: Watch(
-              builder:
-                  (ctx, _) => SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children:
-                          logs.value
-                              .map(
-                                (l) => Text(
-                                  l,
-                                  style: const TextStyle(fontSize: 11),
-                                ),
-                              )
-                              .toList(),
-                    ),
-                  ),
+              builder: (ctx, _) => SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: logs.value
+                      .map(
+                        (l) => Text(
+                          l,
+                          style: const TextStyle(fontSize: 11),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
             ),
           ),
           const Text(
@@ -2550,22 +2528,20 @@ class _ReactiveStateMixinDemoState extends State<_ReactiveStateMixinDemo>
           SizedBox(
             height: 40,
             child: Watch(
-              builder:
-                  (ctx, _) => SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children:
-                          logs.value
-                              .take(3)
-                              .map(
-                                (l) => Text(
-                                  l,
-                                  style: const TextStyle(fontSize: 10),
-                                ),
-                              )
-                              .toList(),
-                    ),
-                  ),
+              builder: (ctx, _) => SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: logs.value
+                      .take(3)
+                      .map(
+                        (l) => Text(
+                          l,
+                          style: const TextStyle(fontSize: 10),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
             ),
           ),
           const Text(
@@ -2594,10 +2570,9 @@ class _ComputedSelectorDemoState extends State<_ComputedSelectorDemo> {
     (_) => {
       'sum': items.value.fold(0, (a, b) => a + b),
       'count': items.value.length,
-      'avg':
-          items.value.isEmpty
-              ? 0.0
-              : items.value.fold(0, (a, b) => a + b) / items.value.length,
+      'avg': items.value.isEmpty
+          ? 0.0
+          : items.value.fold(0, (a, b) => a + b) / items.value.length,
     },
   );
 
@@ -2707,12 +2682,11 @@ class _AsyncSignalFromStreamDemoState
           ),
           const SizedBox(height: 12),
           Watch(
-            builder:
-                (ctx, _) => _streamSignal.value.when(
-                  loading: () => const Text('Waiting for stream data...'),
-                  data: (value) => Text('Stream value: $value'),
-                  error: (e, _) => Text('Error: $e'),
-                ),
+            builder: (ctx, _) => _streamSignal.value.when(
+              loading: () => const Text('Waiting for stream data...'),
+              data: (value) => Text('Stream value: $value'),
+              error: (e, _) => Text('Error: $e'),
+            ),
           ),
           const SizedBox(height: 8),
           Row(
@@ -2792,18 +2766,17 @@ class _AsyncComputedDemoState extends State<_AsyncComputedDemo> {
           Watch(
             builder: (ctx, _) {
               return userData.value.when(
-                loading:
-                    () => const Row(
-                      children: [
-                        SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                        SizedBox(width: 8),
-                        Text('Fetching user...'),
-                      ],
+                loading: () => const Row(
+                  children: [
+                    SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
                     ),
+                    SizedBox(width: 8),
+                    Text('Fetching user...'),
+                  ],
+                ),
                 data: (value) => Text('✅ $value'),
                 error: (error, _) => Text('❌ $error'),
               );
@@ -2997,16 +2970,15 @@ class _CombineAsyncDemoState extends State<_CombineAsyncDemo> {
           ),
           const SizedBox(height: 4),
           Watch(
-            builder:
-                (ctx, _) => Row(
-                  children: [
-                    _AsyncStateIndicator('Name', userName.value),
-                    const SizedBox(width: 8),
-                    _AsyncStateIndicator('Age', userAge.value),
-                    const SizedBox(width: 8),
-                    _AsyncStateIndicator('City', userCity.value),
-                  ],
-                ),
+            builder: (ctx, _) => Row(
+              children: [
+                _AsyncStateIndicator('Name', userName.value),
+                const SizedBox(width: 8),
+                _AsyncStateIndicator('Age', userAge.value),
+                const SizedBox(width: 8),
+                _AsyncStateIndicator('City', userCity.value),
+              ],
+            ),
           ),
           const SizedBox(height: 12),
           // Show combined result
@@ -3018,18 +2990,17 @@ class _CombineAsyncDemoState extends State<_CombineAsyncDemo> {
           Watch(
             builder: (ctx, _) {
               return combined.value.when(
-                loading:
-                    () => const Row(
-                      children: [
-                        SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                        SizedBox(width: 8),
-                        Text('Waiting for all data...'),
-                      ],
+                loading: () => const Row(
+                  children: [
+                    SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
                     ),
+                    SizedBox(width: 8),
+                    Text('Waiting for all data...'),
+                  ],
+                ),
                 data: (value) => Text('✅ $value'),
                 error: (error, _) => Text('❌ $error'),
               );
@@ -3067,6 +3038,713 @@ class _AsyncStateIndicator extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade600),
       ),
       child: Text('$label: $icon'),
+    );
+  }
+}
+
+// ============================================================
+// Flutter Utilities Demos
+// ============================================================
+
+// ============================================================
+// SignalTextController Demo
+// ============================================================
+class _SignalTextControllerDemo extends StatefulWidget {
+  const _SignalTextControllerDemo();
+
+  @override
+  State<_SignalTextControllerDemo> createState() =>
+      _SignalTextControllerDemoState();
+}
+
+class _SignalTextControllerDemoState extends State<_SignalTextControllerDemo> {
+  late final SignalTextController nameInput;
+
+  @override
+  void initState() {
+    super.initState();
+    nameInput = SignalTextController(text: 'Hello');
+  }
+
+  @override
+  void dispose() {
+    nameInput.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _DemoCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'SignalTextController syncs TextField with reactive signals',
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: nameInput.controller,
+            decoration: const InputDecoration(
+              labelText: 'Enter your name',
+              isDense: true,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Watch(
+            builder: (ctx, _) => Text(
+              'Hello, ${nameInput.text.value.isEmpty ? "stranger" : nameInput.text.value}!',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Watch(
+                builder: (ctx, _) => Text('Length: ${nameInput.length.value}'),
+              ),
+              const SizedBox(width: 16),
+              Watch(
+                builder: (ctx, _) =>
+                    Text('Empty: ${nameInput.isEmpty.value ? "Yes" : "No"}'),
+              ),
+              const Spacer(),
+              ElevatedButton(
+                onPressed: nameInput.clear,
+                child: const Text('Clear'),
+              ),
+              const SizedBox(width: 8),
+              ElevatedButton(
+                onPressed: () => nameInput.text.value = 'World',
+                child: const Text('Set "World"'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ============================================================
+// SignalScrollController Demo
+// ============================================================
+class _SignalScrollControllerDemo extends StatefulWidget {
+  const _SignalScrollControllerDemo();
+
+  @override
+  State<_SignalScrollControllerDemo> createState() =>
+      _SignalScrollControllerDemoState();
+}
+
+class _SignalScrollControllerDemoState
+    extends State<_SignalScrollControllerDemo> {
+  late final SignalScrollController scrollSignal;
+
+  @override
+  void initState() {
+    super.initState();
+    scrollSignal = SignalScrollController(showBackToTopThreshold: 100);
+  }
+
+  @override
+  void dispose() {
+    scrollSignal.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _DemoCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'SignalScrollController provides reactive scroll state',
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 150,
+            child: Stack(
+              children: [
+                ListView.builder(
+                  controller: scrollSignal.controller,
+                  itemCount: 50,
+                  itemBuilder: (context, index) => ListTile(
+                    dense: true,
+                    title: Text('Item ${index + 1}'),
+                  ),
+                ),
+                Positioned(
+                  right: 8,
+                  bottom: 8,
+                  child: Watch(
+                    builder: (ctx, _) => scrollSignal.showBackToTop.value
+                        ? FloatingActionButton.small(
+                            heroTag: 'api_scroll_demo',
+                            onPressed: scrollSignal.animateToTop,
+                            child: const Icon(Icons.arrow_upward),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Watch(
+                builder: (ctx, _) => Text(
+                  'Offset: ${scrollSignal.offset.value.toStringAsFixed(1)}',
+                ),
+              ),
+              const SizedBox(width: 16),
+              Watch(
+                builder: (ctx, _) => Text(
+                  'Progress: ${(scrollSignal.scrollProgress.value * 100).toStringAsFixed(0)}%',
+                ),
+              ),
+              const SizedBox(width: 16),
+              Watch(
+                builder: (ctx, _) {
+                  final dir = scrollSignal.direction.value;
+                  final icon = dir == ScrollDirection.forward
+                      ? '↓'
+                      : dir == ScrollDirection.reverse
+                          ? '↑'
+                          : '•';
+                  return Text('Dir: $icon');
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ============================================================
+// SignalPageController Demo
+// ============================================================
+class _SignalPageControllerDemo extends StatefulWidget {
+  const _SignalPageControllerDemo();
+
+  @override
+  State<_SignalPageControllerDemo> createState() =>
+      _SignalPageControllerDemoState();
+}
+
+class _SignalPageControllerDemoState extends State<_SignalPageControllerDemo> {
+  late final SignalPageController pageSignal;
+  final colors = [Colors.red, Colors.green, Colors.blue, Colors.orange];
+
+  @override
+  void initState() {
+    super.initState();
+    pageSignal = SignalPageController();
+  }
+
+  @override
+  void dispose() {
+    pageSignal.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _DemoCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'SignalPageController provides reactive page navigation',
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 120,
+            child: PageView.builder(
+              controller: pageSignal.controller,
+              itemCount: colors.length,
+              itemBuilder: (context, index) => Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  color: colors[index].withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Text(
+                    'Page ${index + 1}',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                onPressed: pageSignal.previousPage,
+                icon: const Icon(Icons.arrow_back),
+              ),
+              Watch(
+                builder: (ctx, _) => Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(
+                    colors.length,
+                    (index) => Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: pageSignal.currentPage.value == index
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.grey.shade400,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: pageSignal.nextPage,
+                icon: const Icon(Icons.arrow_forward),
+              ),
+            ],
+          ),
+          Watch(
+            builder: (ctx, _) => Text(
+              'Page: ${pageSignal.page.value.toStringAsFixed(2)}',
+              style: const TextStyle(fontSize: 12),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ============================================================
+// PaginatedSignal Demo
+// ============================================================
+class _PaginatedSignalDemo extends StatefulWidget {
+  const _PaginatedSignalDemo();
+
+  @override
+  State<_PaginatedSignalDemo> createState() => _PaginatedSignalDemoState();
+}
+
+class _PaginatedSignalDemoState extends State<_PaginatedSignalDemo> {
+  late final PaginatedSignal<String> itemsSignal;
+
+  @override
+  void initState() {
+    super.initState();
+    itemsSignal = PaginatedSignal<String>(
+      loader: _loadItems,
+      config: const PaginationConfig(pageSize: 5),
+    );
+    itemsSignal.loadFirst();
+  }
+
+  Future<PaginationResult<String>> _loadItems(int page, int pageSize) async {
+    // Simulate network delay
+    await Future.delayed(const Duration(milliseconds: 500));
+    // Simulate 3 pages of data
+    if (page >= 3) {
+      return const PaginationResult(items: [], hasMore: false);
+    }
+    final items = List.generate(
+      pageSize,
+      (i) => 'Item ${page * pageSize + i + 1}',
+    );
+    return PaginationResult(items: items, hasMore: page < 2);
+  }
+
+  @override
+  void dispose() {
+    itemsSignal.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _DemoCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'PaginatedSignal handles paginated data loading',
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 180,
+            child: Watch(
+              builder: (ctx, _) {
+                final state = itemsSignal.state.value;
+                final items = itemsSignal.items.value;
+
+                if (state == PaginationState.loadingFirst) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (state == PaginationState.error && items.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Error: ${itemsSignal.error.value}'),
+                        ElevatedButton(
+                          onPressed: () => itemsSignal.retry(),
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return RefreshIndicator(
+                  onRefresh: itemsSignal.refresh,
+                  child: ListView.builder(
+                    itemCount:
+                        items.length + (itemsSignal.hasMore.value ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index >= items.length) {
+                        // Trigger load more
+                        if (state != PaginationState.loadingMore) {
+                          itemsSignal.loadMore();
+                        }
+                        return const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+                      return ListTile(
+                        dense: true,
+                        title: Text(items[index]),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete, size: 18),
+                          onPressed: () => itemsSignal.removeAt(index),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Watch(
+                builder: (ctx, _) => Text(
+                  'Items: ${itemsSignal.itemCount.value}',
+                ),
+              ),
+              const SizedBox(width: 16),
+              Watch(
+                builder: (ctx, _) => Text(
+                  'Page: ${itemsSignal.currentPage.value + 1}',
+                ),
+              ),
+              const SizedBox(width: 16),
+              Watch(
+                builder: (ctx, _) => Text(
+                  'Has more: ${itemsSignal.hasMore.value ? "Yes" : "No"}',
+                ),
+              ),
+              const Spacer(),
+              ElevatedButton(
+                onPressed: itemsSignal.reset,
+                child: const Text('Reset'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ============================================================
+// UndoableSignal Demo
+// ============================================================
+class _UndoableSignalDemo extends StatefulWidget {
+  const _UndoableSignalDemo();
+
+  @override
+  State<_UndoableSignalDemo> createState() => _UndoableSignalDemoState();
+}
+
+class _UndoableSignalDemoState extends State<_UndoableSignalDemo> {
+  late final UndoableSignal<String> textSignal;
+  final _controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    textSignal = UndoableSignal<String>('', maxHistory: 20);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onTextChanged(String value) {
+    textSignal.value = value;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _DemoCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'UndoableSignal provides undo/redo history for any value',
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _controller,
+            decoration: const InputDecoration(
+              labelText: 'Type and use undo/redo',
+              isDense: true,
+            ),
+            onChanged: _onTextChanged,
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Watch(
+                builder: (ctx, _) => IconButton(
+                  onPressed: textSignal.canUndo.value
+                      ? () {
+                          textSignal.undo();
+                          _controller.text = textSignal.value;
+                          _controller.selection = TextSelection.collapsed(
+                            offset: textSignal.value.length,
+                          );
+                        }
+                      : null,
+                  icon: const Icon(Icons.undo),
+                  tooltip: 'Undo',
+                ),
+              ),
+              Watch(
+                builder: (ctx, _) => IconButton(
+                  onPressed: textSignal.canRedo.value
+                      ? () {
+                          textSignal.redo();
+                          _controller.text = textSignal.value;
+                          _controller.selection = TextSelection.collapsed(
+                            offset: textSignal.value.length,
+                          );
+                        }
+                      : null,
+                  icon: const Icon(Icons.redo),
+                  tooltip: 'Redo',
+                ),
+              ),
+              const Spacer(),
+              Watch(
+                builder: (ctx, _) => Text(
+                  'Undo: ${textSignal.undoCount.value} | Redo: ${textSignal.redoCount.value}',
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Watch(
+            builder: (ctx, _) => Text(
+              'Current: "${textSignal.value}"',
+              style: const TextStyle(fontStyle: FontStyle.italic),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  textSignal.clearHistory();
+                  _controller.clear();
+                },
+                child: const Text('Clear History'),
+              ),
+              const SizedBox(width: 8),
+              Watch(
+                builder: (ctx, _) => Text(
+                  'History: ${textSignal.historyLength} entries',
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ============================================================
+// SearchSignal Demo
+// ============================================================
+class _SearchSignalDemo extends StatefulWidget {
+  const _SearchSignalDemo();
+
+  @override
+  State<_SearchSignalDemo> createState() => _SearchSignalDemoState();
+}
+
+class _SearchSignalDemoState extends State<_SearchSignalDemo> {
+  late final SearchSignal<String> searchSignal;
+
+  final _allItems = [
+    'Apple',
+    'Banana',
+    'Cherry',
+    'Date',
+    'Elderberry',
+    'Fig',
+    'Grape',
+    'Honeydew',
+    'Kiwi',
+    'Lemon',
+    'Mango',
+    'Nectarine',
+    'Orange',
+    'Papaya',
+    'Quince',
+    'Raspberry',
+    'Strawberry',
+    'Tangerine',
+    'Watermelon',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    searchSignal = SearchSignal<String>(
+      searcher: _search,
+      config: const SearchConfig(
+        debounceDuration: Duration(milliseconds: 300),
+        minQueryLength: 1,
+      ),
+    );
+  }
+
+  Future<List<String>> _search(String query) async {
+    // Simulate network delay
+    await Future.delayed(const Duration(milliseconds: 200));
+    final lowerQuery = query.toLowerCase();
+    return _allItems
+        .where((item) => item.toLowerCase().contains(lowerQuery))
+        .toList();
+  }
+
+  @override
+  void dispose() {
+    searchSignal.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _DemoCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'SearchSignal provides debounced search with caching',
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Search fruits...',
+                    isDense: true,
+                    suffixIcon: Watch(
+                      builder: (ctx, _) {
+                        final state = searchSignal.state.value;
+                        if (state == SearchState.searching ||
+                            state == SearchState.debouncing) {
+                          return const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: Padding(
+                              padding: EdgeInsets.all(12.0),
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          );
+                        }
+                        return const Icon(Icons.search);
+                      },
+                    ),
+                  ),
+                  onChanged: (value) => searchSignal.query.value = value,
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                onPressed: searchSignal.clear,
+                icon: const Icon(Icons.clear),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 120,
+            child: Watch(
+              builder: (ctx, _) {
+                final state = searchSignal.state.value;
+                final results = searchSignal.results.value;
+
+                switch (state) {
+                  case SearchState.idle:
+                    return const Center(
+                      child: Text('Type to search fruits'),
+                    );
+                  case SearchState.debouncing:
+                  case SearchState.searching:
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  case SearchState.empty:
+                    return const Center(
+                      child: Text('No results found'),
+                    );
+                  case SearchState.error:
+                    return Center(
+                      child: Text('Error: ${searchSignal.error.value}'),
+                    );
+                  case SearchState.results:
+                    return ListView.builder(
+                      itemCount: results.length,
+                      itemBuilder: (context, index) => ListTile(
+                        dense: true,
+                        title: Text(results[index]),
+                        leading: const Icon(Icons.local_florist, size: 18),
+                      ),
+                    );
+                }
+              },
+            ),
+          ),
+          Watch(
+            builder: (ctx, _) => Text(
+              'Results: ${searchSignal.resultCount.value} | '
+              'Query: "${searchSignal.query.value}"',
+              style: const TextStyle(fontSize: 12),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -24,4 +24,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | void_signals_flutter | 1.0.0 | Flutter bindings |
 | void_signals_hooks | 1.0.0 | Hooks integration |
 | void_signals_lint | 1.0.0 | Lint rules |
-
+| void_signals_devtools_extension | 1.0.0 | DevTools extension |

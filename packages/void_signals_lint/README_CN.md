@@ -1,11 +1,23 @@
-# void_signals_lint
+<p align="center">
+  <img src="https://raw.githubusercontent.com/void-signals/void-signals/main/art/void.png" alt="void_signals logo" width="180" />
+</p>
 
-[![pub package](https://img.shields.io/pub/v/void_signals_lint.svg)](https://pub.dev/packages/void_signals_lint)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+<h1 align="center">void_signals_lint</h1>
 
-[void_signals](https://pub.dev/packages/void_signals)、[void_signals_flutter](https://pub.dev/packages/void_signals_flutter) 和 [void_signals_hooks](https://pub.dev/packages/void_signals_hooks) 的生产级自定义 lint 规则。
+<p align="center">
+  <a href="https://pub.dev/packages/void_signals">void_signals</a>、<a href="https://pub.dev/packages/void_signals_flutter">void_signals_flutter</a> 和 <a href="https://pub.dev/packages/void_signals_hooks">void_signals_hooks</a> 的生产级自定义 lint 规则。
+</p>
 
-[English](README.md) | 简体中文
+<p align="center">
+  <a href="https://pub.dev/packages/void_signals_lint"><img src="https://img.shields.io/pub/v/void_signals_lint.svg" alt="pub package" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
+</p>
+
+<p align="center">
+  <a href="README.md">English</a> | 简体中文
+</p>
+
+---
 
 本包提供全面的静态分析，帮助你使用 void_signals 编写更好的代码，捕获常见错误，强制执行最佳实践，并为大多数问题提供**快速修复**。
 

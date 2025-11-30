@@ -9,6 +9,9 @@ import '../state/package_detail_state.dart';
 import '../utils/responsive.dart';
 
 /// Package detail page
+///
+/// Demonstrates usage of:
+/// - [SignalScrollController] for reactive scroll state with back-to-top button
 class PackageDetailPage extends StatefulWidget {
   final String packageName;
 
@@ -20,12 +23,20 @@ class PackageDetailPage extends StatefulWidget {
 
 class _PackageDetailPageState extends State<PackageDetailPage> {
   late final PackageDetailState _state;
+  late final SignalScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
     _state = PackageDetailState(widget.packageName);
+    _scrollController = SignalScrollController(showBackToTopThreshold: 300);
     _state.load();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -37,56 +48,86 @@ class _PackageDetailPageState extends State<PackageDetailPage> {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: _state.refresh,
-        child: CustomScrollView(
-          slivers: [
-            // App bar
-            SliverAppBar.large(
-              title: Text(widget.packageName),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.open_in_new),
-                  onPressed: () => _openPubDev(),
-                  tooltip: 'Open on pub.dev',
+        child: Stack(
+          children: [
+            CustomScrollView(
+              controller: _scrollController.controller,
+              slivers: [
+                // App bar
+                SliverAppBar.large(
+                  title: Text(widget.packageName),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.open_in_new),
+                      onPressed: () => _openPubDev(),
+                      tooltip: 'Open on pub.dev',
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.share),
+                      onPressed: () => _sharePackage(),
+                      tooltip: 'Share',
+                    ),
+                  ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.share),
-                  onPressed: () => _sharePackage(),
-                  tooltip: 'Share',
+
+                // Content wrapper for responsive layout
+                SliverToBoxAdapter(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: maxWidth ?? double.infinity,
+                      ),
+                      child: Watch(
+                        builder: (context, child) {
+                          return _state.info.value.when(
+                            loading: () => const _LoadingSection(),
+                            error: (error, _) => _ErrorSection(
+                              error: error,
+                              onRetry: _state.refresh,
+                            ),
+                            data: (info) => _buildContent(
+                              context,
+                              info,
+                              isCompact: isCompact,
+                              padding: padding,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                      height: MediaQuery.of(context).padding.bottom + 100),
                 ),
               ],
             ),
 
-            // Content wrapper for responsive layout
-            SliverToBoxAdapter(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: maxWidth ?? double.infinity,
-                  ),
-                  child: Watch(
-                    builder: (context, child) {
-                      return _state.info.value.when(
-                        loading: () => const _LoadingSection(),
-                        error: (error, _) => _ErrorSection(
-                          error: error,
-                          onRetry: _state.refresh,
-                        ),
-                        data: (info) => _buildContent(
-                          context,
-                          info,
-                          isCompact: isCompact,
-                          padding: padding,
-                        ),
-                      );
-                    },
-                  ),
-                ),
+            // Floating back-to-top button
+            Positioned(
+              right: 16,
+              bottom: MediaQuery.of(context).padding.bottom + 100,
+              child: Watch(
+                builder: (context, child) {
+                  final showButton = _scrollController.showBackToTop.value;
+                  return AnimatedSlide(
+                    duration: const Duration(milliseconds: 200),
+                    offset: showButton ? Offset.zero : const Offset(0, 2),
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 200),
+                      opacity: showButton ? 1.0 : 0.0,
+                      child: FloatingActionButton.small(
+                        heroTag: 'detail_back_to_top',
+                        onPressed: _scrollController.animateToTop,
+                        tooltip: 'Back to top',
+                        child: const Icon(Icons.arrow_upward),
+                      ),
+                    ),
+                  );
+                },
               ),
-            ),
-
-            SliverToBoxAdapter(
-              child:
-                  SizedBox(height: MediaQuery.of(context).padding.bottom + 100),
             ),
           ],
         ),

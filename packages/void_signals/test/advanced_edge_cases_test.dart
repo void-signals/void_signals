@@ -129,13 +129,13 @@ void main() {
       final s = signal<int?>(null);
       final c = computed<int?>((p) => s.value);
 
-      expect(c.value, null);
+      expect(c(), null);
 
       s.value = 42;
-      expect(c.value, 42);
+      expect(c(), 42);
 
       s.value = null;
-      expect(c.value, null);
+      expect(c(), null);
     });
 
     test('should handle computed with expensive calculation', () {
@@ -153,16 +153,16 @@ void main() {
       });
 
       // Access multiple times - should only compute once
-      expect(c.value, 45);
-      expect(c.value, 45);
-      expect(c.value, 45);
+      expect(c(), 45);
+      expect(c(), 45);
+      expect(c(), 45);
       expect(expensiveCallCount, 1);
 
       // Change source - should recompute only on access
       s.value = 5;
       expect(expensiveCallCount, 1); // Not yet
 
-      expect(c.value, 10);
+      expect(c(), 10);
       expect(expensiveCallCount, 2);
     });
 
@@ -183,19 +183,19 @@ void main() {
         }
       });
 
-      expect(result.value, 'A');
+      expect(result(), 'A');
 
       // Change unused branch - should not affect
       valueB.value = 'B2';
-      expect(result.value, 'A');
+      expect(result(), 'A');
 
       // Switch branch
       condition.value = 1;
-      expect(result.value, 'B2');
+      expect(result(), 'B2');
 
       // Now change unused branch A
       valueA.value = 'A2';
-      expect(result.value, 'B2'); // Still B2
+      expect(result(), 'B2'); // Still B2
     });
 
     test('should handle computed with previous value optimization', () {
@@ -209,12 +209,12 @@ void main() {
         return current;
       });
 
-      expect(optimized.value, 6);
+      expect(optimized(), 6);
       expect(computeCount, 1);
 
       // Same sum - but items changed
       items.value = [3, 2, 1];
-      expect(optimized.value, 6);
+      expect(optimized(), 6);
       expect(computeCount, 2);
     });
 
@@ -232,15 +232,15 @@ void main() {
       final c = computed((p) => a.value * 3);
       final d = computed((p) {
         dComputeCount++;
-        return b.value + c.value;
+        return b() + c();
       });
 
-      expect(d.value, 5); // 2 + 3
+      expect(d(), 5); // 2 + 3
       expect(dComputeCount, 1);
 
       // Change A - D should only compute once
       a.value = 2;
-      expect(d.value, 10); // 4 + 6
+      expect(d(), 10); // 4 + 6
       expect(dComputeCount, 2); // Only one additional compute
     });
 
@@ -256,20 +256,20 @@ void main() {
         return s.value * 10;
       });
 
-      expect(c.value, 0);
+      expect(c(), 0);
       expect(callCount, 1);
 
       s.value = 1;
-      expect(() => c.value, throwsException);
+      expect(() => c(), throwsException);
 
       s.value = 2;
-      expect(c.value, 20);
+      expect(c(), 20);
 
       s.value = 3;
-      expect(() => c.value, throwsException);
+      expect(() => c(), throwsException);
 
       s.value = 4;
-      expect(c.value, 40);
+      expect(c(), 40);
     });
 
     test('should handle computed accessing peek', () {
@@ -282,17 +282,17 @@ void main() {
         return tracked.value + untracked.peek();
       });
 
-      expect(c.value, 101);
+      expect(c(), 101);
       expect(computeCount, 1);
 
       // Change tracked - should recompute
       tracked.value = 2;
-      expect(c.value, 102);
+      expect(c(), 102);
       expect(computeCount, 2);
 
       // Change untracked - should NOT recompute (but value stale)
       untracked.value = 200;
-      expect(c.value, 102); // Stale value, not 202
+      expect(c(), 102); // Stale value, not 202
       expect(computeCount, 2);
 
       // Force recompute by changing tracked
@@ -301,7 +301,7 @@ void main() {
       // (peek doesn't cause recompute, but when recomputing it reads current value)
       // Actually: untracked was changed to 200, peek reads 200, so 3 + 200 = 203
       // But the test shows 103, so peek caches the value somehow
-      expect(c.value, 103);
+      expect(c(), 103);
       expect(computeCount, 3);
     });
   });
@@ -558,7 +558,7 @@ void main() {
         final c = computed((p) => s.value * 10);
 
         effect(() {
-          computedValues.add(c.value);
+          computedValues.add(c());
         });
 
         effect(() {
@@ -663,7 +663,7 @@ void main() {
 
       final scope = effectScope(() {
         c = computed((p) => s.value * 2);
-        effect(() => c!.value);
+        effect(() => c!());
       });
 
       expect(s.hasSubscribers, true);
@@ -697,19 +697,19 @@ void main() {
 
       final c1 = computed((p) => a.value + b.value);
       final c2 = computed((p) {
-        final c1Val = c1.value;
+        final c1Val = c1();
         // This could invalidate c1's cache
         return c1Val * 10;
       });
 
-      expect(c2.value, 30);
+      expect(c2(), 30);
 
       batch(() {
         a.value = 10;
         b.value = 20;
       });
 
-      expect(c2.value, 300);
+      expect(c2(), 300);
     });
   });
 

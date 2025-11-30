@@ -1,11 +1,23 @@
-# void_signals DevTools Extension
+<p align="center">
+  <img src="https://raw.githubusercontent.com/void-signals/void-signals/main/art/void.png" alt="void_signals logo" width="180" />
+</p>
 
-[![pub package](https://img.shields.io/pub/v/void_signals_devtools_extension.svg)](https://pub.dev/packages/void_signals_devtools_extension)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+<h1 align="center">void_signals DevTools Extension</h1>
 
-English | [简体中文](README_CN.md)
+<p align="center">
+  A powerful DevTools extension for visualizing and debugging <a href="https://pub.dev/packages/void_signals">void_signals</a> reactive state management.
+</p>
 
-A powerful DevTools extension for visualizing and debugging [void_signals](https://pub.dev/packages/void_signals) reactive state management.
+<p align="center">
+  <a href="https://pub.dev/packages/void_signals_devtools_extension"><img src="https://img.shields.io/pub/v/void_signals_devtools_extension.svg" alt="pub package" /></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
+</p>
+
+<p align="center">
+  English | <a href="README_CN.md">简体中文</a>
+</p>
+
+---
 
 ## ✨ Features
 

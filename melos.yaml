@@ -5,43 +5,135 @@ repository: https://github.com/void-signals/void_signals
 
 packages:
   - packages/**
+  - example
+  - benchmark
   
 environment:
   sdk: '>=3.0.0 <4.0.0'
   flutter: '>=3.0.0'
 
 scripts:
+  # === Code Quality ===
   analyze:
     description: Analyze all packages
-    exec: dart analyze
-
-  test:
-    description: Run tests in all packages
-    exec: dart test
+    exec: dart analyze --fatal-infos
 
   format:
     description: Format all Dart code
     exec: dart format .
     
+  format:check:
+    description: Check formatting without changes
+    exec: dart format --set-exit-if-changed .
+
+  # === Dependencies ===
   pub:get:
     description: Get dependencies for all packages
-    exec: dart pub get
+    exec: flutter pub get
     
   pub:upgrade:
     description: Upgrade dependencies for all packages
-    exec: dart pub upgrade
-    
+    exec: flutter pub upgrade
+
+  # === Testing ===
+  test:
+    description: Run tests in all packages
+    exec: flutter test
+    packageFilters:
+      dirExists: test
+      
+  test:coverage:
+    description: Run tests with coverage
+    exec: flutter test --coverage
+    packageFilters:
+      dirExists: test
+
+  # === Benchmarks ===
   benchmark:
     description: Run benchmarks
+    run: |
+      cd benchmark && ./bench.sh
+
+  # === Example App ===
+  example:run:
+    description: Run Flutter example app
+    run: |
+      cd example && flutter run
+      
+  example:build:web:
+    description: Build example app for web
+    run: |
+      cd example && flutter build web --release
+      
+  example:build:apk:
+    description: Build example app for Android
+    run: |
+      cd example && flutter build apk --release
+      
+  example:build:ios:
+    description: Build example app for iOS
+    run: |
+      cd example && flutter build ios --release --no-codesign
+
+  # === DevTools Extension ===
+  devtools:build:
+    description: Build DevTools extension for production
+    run: |
+      cd packages/void_signals_devtools_extension && \
+      flutter pub get && \
+      flutter build web --release --no-tree-shake-icons && \
+      echo "Build completed at: packages/void_signals_devtools_extension/build/web"
+      
+  devtools:install:
+    description: Build and copy DevTools extension to void_signals_flutter
+    run: |
+      cd packages/void_signals_devtools_extension && \
+      flutter pub get && \
+      flutter build web --release --no-tree-shake-icons && \
+      rm -rf ../void_signals_flutter/extension/devtools/build && \
+      mkdir -p ../void_signals_flutter/extension/devtools && \
+      cp -r build/web ../void_signals_flutter/extension/devtools/build && \
+      echo "DevTools extension installed to: packages/void_signals_flutter/extension/devtools/build"
+      
+  devtools:serve:
+    description: Serve DevTools extension for development
+    run: |
+      cd packages/void_signals_devtools_extension && \
+      flutter run -d chrome --web-port=9100
+
+  # === Publishing ===
+  publish:dry:
+    description: Dry run publish for all publishable packages
+    exec: dart pub publish --dry-run
     packageFilters:
-      scope: void_signals
-    exec: dart run benchmark
+      noPrivate: true
+      
+  publish:
+    description: Publish all packages (requires confirmation)
+    exec: dart pub publish
+    packageFilters:
+      noPrivate: true
+
+  # === Clean ===
+  clean:
+    description: Clean all packages
+    exec: flutter clean
     
-  example:flutter:
-    description: Run Flutter example
+  clean:deep:
+    description: Deep clean including build directories
+    run: |
+      melos clean && \
+      find . -type d -name "build" -exec rm -rf {} + 2>/dev/null || true && \
+      find . -type d -name ".dart_tool" -exec rm -rf {} + 2>/dev/null || true && \
+      find . -type f -name "pubspec.lock" -delete 2>/dev/null || true && \
+      echo "Deep clean completed"
+
+  # === Code Generation ===
+  generate:
+    description: Run build_runner for code generation
+    exec: dart run build_runner build --delete-conflicting-outputs
     packageFilters:
-      scope: void_signals_flutter
-    exec: flutter run --example
+      dependsOn: build_runner
 
 ide:
   intellij:

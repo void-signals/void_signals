@@ -1,2 +1,0 @@
-# Include build directory even if it's in .gitignore
-!build

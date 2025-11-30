@@ -1,0 +1,11 @@
+name: benchmark_state_beacon
+description: Benchmark for state_beacon
+publish_to: none
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  reactivity_benchmark:
+    path: ../..
+  state_beacon_core: any
