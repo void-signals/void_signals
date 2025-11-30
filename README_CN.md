@@ -200,11 +200,15 @@ void_signals 基于 alien-signals 构建，是目前最快的信号实现之一�
 📊 **[查看最新基准测试报告](benchmark/bench/BENCHMARK_REPORT.md)**
 
 <!-- BENCHMARK_SUMMARY_START -->
-| 排名 | 框架 | 获胜数 | 通过率 |
-|------|------|--------|--------|
-| 🥇 | void_signals | 19 | 100% |
-| 🥈 | alien_signals | 18 | 100% |
-| 🥉 | preact_signals | 2 | 100% |
+| Rank | Framework | Wins | Pass Rate |
+|------|-----------|------|-----------|
+| 🥇 | void_signals | 22 | 100% |
+| 🥈 | alien_signals | 10 | 100% |
+| 🥉 | state_beacon | 3 | 100% |
+| 4 | preact_signals | 1 | 100% |
+| 5 | mobx | 0 | 100% |
+| 6 | signals_core | 0 | 100% |
+| 7 | solidart | 0 | 100% |
 <!-- BENCHMARK_SUMMARY_END -->
 
 基准测试包括：
