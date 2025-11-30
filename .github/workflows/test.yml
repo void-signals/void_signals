@@ -1,0 +1,181 @@
+name: Tests
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - 'packages/**'
+      - 'example/**'
+      - '.github/workflows/test.yml'
+  pull_request:
+    branches: ["main"]
+    paths:
+      - 'packages/**'
+      - 'example/**'
+      - '.github/workflows/test.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Dart-only package tests (void_signals core)
+  dart-tests:
+    name: Dart Tests (void_signals)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Get dependencies
+        working-directory: packages/void_signals
+        run: dart pub get
+
+      - name: Analyze
+        working-directory: packages/void_signals
+        run: dart analyze --fatal-infos
+
+      - name: Format check
+        working-directory: packages/void_signals
+        run: dart format --set-exit-if-changed .
+
+      - name: Run tests
+        working-directory: packages/void_signals
+        run: dart test --coverage=coverage
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: packages/void_signals/coverage/lcov.info
+          flags: void_signals
+          fail_ci_if_error: false
+
+  # Flutter package tests
+  flutter-tests:
+    name: Flutter Tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - void_signals_flutter
+          - void_signals_hooks
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Get dependencies
+        working-directory: packages/${{ matrix.package }}
+        run: flutter pub get
+
+      - name: Analyze
+        working-directory: packages/${{ matrix.package }}
+        run: flutter analyze --fatal-infos
+
+      - name: Format check
+        working-directory: packages/${{ matrix.package }}
+        run: dart format --set-exit-if-changed .
+
+      - name: Run tests
+        working-directory: packages/${{ matrix.package }}
+        run: flutter test --coverage
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: packages/${{ matrix.package }}/coverage/lcov.info
+          flags: ${{ matrix.package }}
+          fail_ci_if_error: false
+
+  # Example app tests
+  example-tests:
+    name: Example App Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Get dependencies
+        working-directory: example
+        run: flutter pub get
+
+      - name: Analyze
+        working-directory: example
+        run: flutter analyze --fatal-infos
+
+      - name: Run tests
+        working-directory: example
+        run: flutter test
+
+  # Lint package analysis (no tests, just static analysis)
+  lint-analysis:
+    name: Lint Package Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Get dependencies
+        working-directory: packages/void_signals_lint
+        run: dart pub get
+
+      - name: Analyze
+        working-directory: packages/void_signals_lint
+        run: dart analyze --fatal-infos
+
+      - name: Format check
+        working-directory: packages/void_signals_lint
+        run: dart format --set-exit-if-changed .
+
+  # Summary job that depends on all test jobs
+  test-summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [dart-tests, flutter-tests, example-tests, lint-analysis]
+    if: always()
+    steps:
+      - name: Check test results
+        run: |
+          if [ "${{ needs.dart-tests.result }}" != "success" ] || \
+             [ "${{ needs.flutter-tests.result }}" != "success" ] || \
+             [ "${{ needs.example-tests.result }}" != "success" ] || \
+             [ "${{ needs.lint-analysis.result }}" != "success" ]; then
+            echo "❌ Some tests failed"
+            exit 1
+          fi
+          echo "✅ All tests passed"
+
+      - name: Summary
+        run: |
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Package | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| void_signals (Dart) | ${{ needs.dart-tests.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| void_signals_flutter | ${{ needs.flutter-tests.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| void_signals_hooks | ${{ needs.flutter-tests.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Example App | ${{ needs.example-tests.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| void_signals_lint | ${{ needs.lint-analysis.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
