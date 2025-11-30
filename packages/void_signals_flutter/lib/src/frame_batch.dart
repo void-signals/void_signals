@@ -1,4 +1,3 @@
-import 'package:flutter/scheduler.dart';
 import 'package:void_signals/void_signals.dart';
 
 // =============================================================================

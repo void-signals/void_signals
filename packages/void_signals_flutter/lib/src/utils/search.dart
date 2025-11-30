@@ -378,7 +378,7 @@ class SearchWithSuggestionsSignal<T> extends SearchSignal<T> {
     }
 
     try {
-      final suggestions = await _suggester!(query);
+      final suggestions = await _suggester(query);
       _suggestions.value = suggestions;
     } catch (_) {
       // Silently fail for suggestions
