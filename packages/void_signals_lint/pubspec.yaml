@@ -29,5 +29,3 @@ topics:
   - signals
   - void_signals
   - custom-lint
-  - static-analysis
-  - flutter
