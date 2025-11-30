@@ -34,8 +34,45 @@ void main() async {
     exit(1);
   }
 
-  frameworks.sort();
   final sortedTests = results.keys.toList()..sort();
+
+  // Calculate wins for each framework first (needed for sorting)
+  final stats = <String, ({int wins, int total, int passed})>{};
+
+  for (final f in frameworks) {
+    int wins = 0;
+    int total = 0;
+    int passed = 0;
+
+    for (final test in sortedTests) {
+      final testResults = results[test]!;
+      final result = testResults[f];
+      if (result == null) continue;
+
+      total++;
+      if (result.passed) {
+        passed++;
+
+        // Check if this is the best time
+        final validTimes = testResults.values
+            .where((r) => r.passed)
+            .map((r) => r.time)
+            .toList();
+        final bestTime = validTimes.reduce((a, b) => a < b ? a : b);
+        if (result.time == bestTime) wins++;
+      }
+    }
+
+    stats[f] = (wins: wins, total: total, passed: passed);
+  }
+
+  // Sort frameworks by wins (descending), then alphabetically for ties
+  frameworks.sort((a, b) {
+    final winsA = stats[a]?.wins ?? 0;
+    final winsB = stats[b]?.wins ?? 0;
+    if (winsA != winsB) return winsB.compareTo(winsA);
+    return a.compareTo(b);
+  });
 
   // Generate combined markdown report
   final buffer = StringBuffer();
@@ -96,35 +133,7 @@ void main() async {
   buffer.writeln('## Summary');
   buffer.writeln();
 
-  final stats = <String, ({int wins, int total, int passed})>{};
-
-  for (final f in frameworks) {
-    int wins = 0;
-    int total = 0;
-    int passed = 0;
-
-    for (final test in sortedTests) {
-      final testResults = results[test]!;
-      final result = testResults[f];
-      if (result == null) continue;
-
-      total++;
-      if (result.passed) {
-        passed++;
-
-        // Check if this is the best time
-        final validTimes = testResults.values
-            .where((r) => r.passed)
-            .map((r) => r.time)
-            .toList();
-        final bestTime = validTimes.reduce((a, b) => a < b ? a : b);
-        if (result.time == bestTime) wins++;
-      }
-    }
-
-    stats[f] = (wins: wins, total: total, passed: passed);
-  }
-
+  // Sort by wins for summary table
   final sorted = stats.entries.toList()
     ..sort((a, b) => b.value.wins.compareTo(a.value.wins));
 
