@@ -75,53 +75,53 @@ Benchmark results are saved to:
 <!-- BENCHMARK_RESULTS_START -->
 ## Latest Benchmark Results
 
-| Test | alien_signals | mobx | preact_signals | signals_core | solidart | state_beacon | void_signals |
+| Test | void_signals | alien_signals | state_beacon | preact_signals | mobx | signals_core | solidart |
 |------|--------|--------|--------|--------|--------|--------|--------|
-| 1000x12 - 4 sources - dynamic (large, sum: pass, count: pass) | **256.00ms** 🏆 | 1.78s | 3.65s | 3.50s | 1.68s | 338.29ms | 259.67ms |
-| 1000x5 - 25 sources (wide dense, sum: pass, count: pass) | 415.23ms | 3.42s | 3.36s | 3.50s | 21.26s | 498.92ms | **389.25ms** 🏆 |
-| 100x15 - 6 sources - dynamic (very dynamic, sum: pass, count: pass) | 229.67ms | 1.66s | 465.49ms | 478.37ms | 1.76s | 257.48ms | **219.65ms** 🏆 |
-| 10x10 - 6 sources - dynamic (dynamic, sum: pass, count: pass) | 155.51ms | 1.48s | 291.38ms | 292.32ms | 1.43s | 201.91ms | **139.57ms** 🏆 |
-| 10x5 - 2 sources (simple, sum: pass, count: pass) | 184.58ms | 1.90s | 507.30ms | 534.25ms | 753.07ms | 250.85ms | **163.93ms** 🏆 |
-| 5x500 - 3 sources (deep, sum: pass, count: pass) | 151.87ms | 1.09s | 234.55ms | 216.78ms | 492.27ms | 202.63ms | **143.42ms** 🏆 |
-| avoidablePropagation (success) | 132.76ms | 2.47s | 207.66ms | 247.76ms | 496.51ms | 176.85ms | **119.99ms** 🏆 |
-| broadPropagation (success) | 242.92ms | 4.21s | 463.18ms | 457.11ms | 4.77s | 397.17ms | **216.27ms** 🏆 |
-| cellx1000 (first: pass, last: pass) | **5.40ms** 🏆 | 66.21ms | 9.70ms | 11.79ms | 20.96ms | 17.82ms | 5.78ms |
-| cellx2500 (first: pass, last: pass) | 20.50ms | 255.76ms | 27.23ms | 26.27ms | 52.49ms | 45.68ms | **18.25ms** 🏆 |
-| cellx5000 (first: pass, last: pass) | **54.93ms** 🏆 | 551.09ms | 68.89ms | 77.23ms | 252.26ms | 110.71ms | 57.03ms |
-| comp_0to1 | **30μs** 🏆 | 16.19ms | 16.43ms | 29.11ms | 20.89ms | 50.79ms | 66μs |
-| comp_1000to1 | **0μs** 🏆 | 21μs | 13μs | 6μs | 13μs | 38μs | **0μs** 🏆 |
-| comp_1to1 | 946μs | 41.68ms | 28.26ms | 17.52ms | 23.35ms | 47.78ms | **882μs** 🏆 |
-| comp_1to1000 | 65μs | 14.45ms | 2.80ms | 4.34ms | 13.80ms | 36.71ms | **42μs** 🏆 |
-| comp_1to2 | **439μs** 🏆 | 20.46ms | 21.40ms | 30.26ms | 35.20ms | 43.00ms | 649μs |
-| comp_1to4 | **218μs** 🏆 | 28.81ms | 23.33ms | 26.77ms | 20.77ms | 42.75ms | 287μs |
-| comp_1to8 | **108μs** 🏆 | 23.58ms | 4.07ms | 5.76ms | 24.29ms | 41.61ms | 112μs |
-| comp_2to1 | 2.27ms | 31.74ms | 8.64ms | 12.29ms | 19.37ms | 26.01ms | **1.76ms** 🏆 |
-| comp_4to1 | **824μs** 🏆 | 11.56ms | 14.23ms | 1.60ms | 10.15ms | 18.02ms | 2.37ms |
-| create_signals | 30.35ms | 61.86ms | **5.18ms** 🏆 | 25.00ms | 52.91ms | 58.38ms | 23.76ms |
-| deepPropagation (success) | 78.14ms | 1.49s | 177.94ms | 173.33ms | 267.05ms | 159.99ms | **75.14ms** 🏆 |
-| diamond (success) | 154.72ms | 2.30s | 288.43ms | 307.81ms | 995.15ms | 220.67ms | **129.28ms** 🏆 |
-| molBench | 486.32ms | 574.63ms | 493.37ms | 487.55ms | 521.25ms | 1.14s | **474.35ms** 🏆 |
-| mux (success) | **291.69ms** 🏆 | 1.75s | 388.46ms | 379.85ms | 5.95s | 371.00ms | 293.24ms |
-| repeatedObservers (success) | 32.95ms | 223.40ms | 39.76ms | 51.33ms | 198.49ms | 59.14ms | **21.34ms** 🏆 |
-| triangle (success) | 63.40ms | 728.27ms | 105.29ms | 108.55ms | 250.35ms | 88.44ms | **58.96ms** 🏆 |
-| unstable (success) | 49.75ms | 325.92ms | 70.12ms | 80.64ms | 332.37ms | 343.86ms | **38.77ms** 🏆 |
-| update_1000to1 | 27μs | 57μs | 20μs | 65μs | 94μs | 16μs | **8μs** 🏆 |
-| update_1to1 | 11.00ms | 21.19ms | 8.15ms | 26.68ms | 38.04ms | **6.65ms** 🏆 | 18.72ms |
-| update_1to1000 | 10μs | 149μs | 30μs | 52μs | 152μs | 377μs | **8μs** 🏆 |
-| update_1to2 | 4.04ms | 10.44ms | 4.22ms | 13.45ms | 19.59ms | **3.31ms** 🏆 | 4.48ms |
-| update_1to4 | 2.77ms | 5.41ms | 2.07ms | 6.61ms | 9.53ms | 1.64ms | **901μs** 🏆 |
-| update_2to1 | 5.58ms | 10.64ms | 4.16ms | 13.31ms | 18.98ms | 3.31ms | **1.96ms** 🏆 |
-| update_4to1 | 2.75ms | 5.15ms | 2.11ms | 6.75ms | 9.58ms | **1.66ms** 🏆 | 2.45ms |
+| 1000x12 - 4 sources - dynamic (large, sum: pass, count: pass) | **256.80ms** 🏆 | 261.82ms | 342.46ms | 3.64s | 1.78s | 3.57s | 1.69s |
+| 1000x5 - 25 sources (wide dense, sum: pass, count: pass) | **385.35ms** 🏆 | 407.34ms | 503.11ms | 3.33s | 3.34s | 3.32s | 21.28s |
+| 100x15 - 6 sources - dynamic (very dynamic, sum: pass, count: pass) | **219.71ms** 🏆 | 235.47ms | 259.58ms | 472.33ms | 1.68s | 482.80ms | 1.75s |
+| 10x10 - 6 sources - dynamic (dynamic, sum: pass, count: pass) | **140.66ms** 🏆 | 155.18ms | 200.83ms | 291.87ms | 1.45s | 291.89ms | 1.44s |
+| 10x5 - 2 sources (simple, sum: pass, count: pass) | **165.44ms** 🏆 | 184.60ms | 245.93ms | 510.68ms | 1.94s | 534.82ms | 756.30ms |
+| 5x500 - 3 sources (deep, sum: pass, count: pass) | **140.85ms** 🏆 | 150.40ms | 204.81ms | 228.77ms | 1.11s | 218.77ms | 487.89ms |
+| avoidablePropagation (success) | **120.06ms** 🏆 | 131.58ms | 179.44ms | 206.34ms | 2.34s | 246.76ms | 488.62ms |
+| broadPropagation (success) | **215.29ms** 🏆 | 243.72ms | 399.20ms | 462.47ms | 4.25s | 447.53ms | 4.73s |
+| cellx1000 (first: pass, last: pass) | **5.83ms** 🏆 | 6.31ms | 15.91ms | 12.06ms | 74.57ms | 12.47ms | 17.66ms |
+| cellx2500 (first: pass, last: pass) | **16.38ms** 🏆 | 19.33ms | 46.93ms | 27.59ms | 255.90ms | 26.84ms | 51.19ms |
+| cellx5000 (first: pass, last: pass) | **53.36ms** 🏆 | 53.60ms | 105.88ms | 77.91ms | 551.52ms | 75.02ms | 255.39ms |
+| comp_0to1 | 33μs | **30μs** 🏆 | 52.02ms | 19.48ms | 16.84ms | 26.48ms | 39.31ms |
+| comp_1000to1 | **0μs** 🏆 | 1μs | 37μs | 13μs | 15μs | 3μs | 13μs |
+| comp_1to1 | **894μs** 🏆 | 3.85ms | 47.22ms | 18.14ms | 31.94ms | 19.99ms | 35.92ms |
+| comp_1to1000 | **42μs** 🏆 | 62μs | 40.01ms | 2.86ms | 13.65ms | 3.83ms | 13.37ms |
+| comp_1to2 | 939μs | **616μs** 🏆 | 43.42ms | 35.75ms | 30.59ms | 21.71ms | 40.29ms |
+| comp_1to4 | 378μs | **280μs** 🏆 | 43.48ms | 20.62ms | 20.57ms | 26.23ms | 30.41ms |
+| comp_1to8 | **120μs** 🏆 | 133μs | 48.35ms | 5.78ms | 21.85ms | 2.67ms | 24.55ms |
+| comp_2to1 | 7.35ms | **1.72ms** 🏆 | 26.11ms | 2.32ms | 35.64ms | 24.83ms | 19.25ms |
+| comp_4to1 | 3.58ms | **929μs** 🏆 | 19.32ms | 19.32ms | 11.32ms | 1.70ms | 7.71ms |
+| create_signals | 30.54ms | 27.29ms | 58.65ms | **12.46ms** 🏆 | 79.40ms | 23.54ms | 62.70ms |
+| deepPropagation (success) | **75.15ms** 🏆 | 78.94ms | 161.27ms | 179.08ms | 1.51s | 175.83ms | 261.79ms |
+| diamond (success) | **128.94ms** 🏆 | 153.19ms | 203.57ms | 284.89ms | 2.33s | 302.27ms | 989.16ms |
+| molBench | **474.20ms** 🏆 | 488.85ms | 1.13s | 489.27ms | 576.51ms | 485.69ms | 526.25ms |
+| mux (success) | **282.82ms** 🏆 | 301.36ms | 367.99ms | 384.98ms | 1.76s | 381.33ms | 6.26s |
+| repeatedObservers (success) | **21.06ms** 🏆 | 32.98ms | 59.79ms | 39.97ms | 228.06ms | 50.92ms | 197.28ms |
+| triangle (success) | **58.78ms** 🏆 | 65.48ms | 85.58ms | 103.24ms | 731.47ms | 109.18ms | 254.13ms |
+| unstable (success) | **38.32ms** 🏆 | 49.21ms | 341.58ms | 70.87ms | 337.07ms | 78.18ms | 326.54ms |
+| update_1000to1 | **8μs** 🏆 | 26μs | 17μs | 39μs | 61μs | 64μs | 94μs |
+| update_1to1 | 15.48ms | 11.03ms | **6.64ms** 🏆 | 8.23ms | 22.54ms | 26.46ms | 37.89ms |
+| update_1to1000 | **8μs** 🏆 | 10μs | 375μs | 29μs | 146μs | 53μs | 150μs |
+| update_1to2 | 3.26ms | **1.94ms** 🏆 | 3.28ms | 4.55ms | 11.25ms | 13.10ms | 19.32ms |
+| update_1to4 | **1.51ms** 🏆 | 2.73ms | 1.65ms | 2.07ms | 5.45ms | 6.51ms | 9.67ms |
+| update_2to1 | **2.39ms** 🏆 | 5.50ms | 3.33ms | 4.16ms | 11.49ms | 13.12ms | 19.30ms |
+| update_4to1 | 2.39ms | 2.69ms | **1.64ms** 🏆 | 2.25ms | 5.27ms | 6.67ms | 9.64ms |
 
 | Rank | Framework | Wins | Pass Rate |
 |------|-----------|------|-----------|
-| 🥇 | void_signals | 22 | 100% |
-| 🥈 | alien_signals | 10 | 100% |
-| 🥉 | state_beacon | 3 | 100% |
+| 🥇 | void_signals | 26 | 100% |
+| 🥈 | alien_signals | 6 | 100% |
+| 🥉 | state_beacon | 2 | 100% |
 | 4 | preact_signals | 1 | 100% |
-| 5 | mobx | 0 | 100% |
-| 6 | signals_core | 0 | 100% |
-| 7 | solidart | 0 | 100% |
+| 5 | solidart | 0 | 100% |
+| 6 | mobx | 0 | 100% |
+| 7 | signals_core | 0 | 100% |
 <!-- BENCHMARK_RESULTS_END -->
 
 ---
