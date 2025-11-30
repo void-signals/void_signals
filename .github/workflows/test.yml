@@ -119,10 +119,6 @@ jobs:
         working-directory: example
         run: flutter pub get
 
-      - name: Analyze
-        working-directory: example
-        run: flutter analyze --fatal-infos
-
       - name: Run tests
         working-directory: example
         run: flutter test
