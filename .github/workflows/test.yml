@@ -50,7 +50,7 @@ jobs:
         run: dart test --coverage=coverage
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: packages/void_signals/coverage/lcov.info
@@ -94,7 +94,7 @@ jobs:
         run: flutter test --coverage
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: packages/${{ matrix.package }}/coverage/lcov.info
