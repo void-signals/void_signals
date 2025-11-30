@@ -206,9 +206,9 @@ We run comprehensive benchmarks comparing void_signals against other popular rea
 <!-- BENCHMARK_SUMMARY_START -->
 | Rank | Framework | Wins | Pass Rate |
 |------|-----------|------|-----------|
-| 🥇 | void_signals | 26 | 100% |
-| 🥈 | alien_signals | 6 | 100% |
-| 🥉 | state_beacon | 2 | 100% |
+| 🥇 | void_signals | 24 | 100% |
+| 🥈 | alien_signals | 9 | 100% |
+| 🥉 | state_beacon | 3 | 100% |
 | 4 | preact_signals | 1 | 100% |
 | 5 | solidart | 0 | 100% |
 | 6 | mobx | 0 | 100% |
