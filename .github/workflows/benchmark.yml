@@ -63,9 +63,35 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
+          
+          # Fetch latest changes
+          git fetch origin main
+          
+          # Check if there are new commits
+          if ! git diff --quiet HEAD origin/main; then
+            echo "Remote has new commits, attempting to rebase..."
+            if git rebase origin/main; then
+              echo "Rebase successful"
+            else
+              echo "Rebase failed, skipping commit"
+              git rebase --abort
+              exit 0
+            fi
+          fi
+          
+          # Stage and commit changes
           git add benchmark/bench/ benchmark/README.md README.md README_CN.md
-          git diff --staged --quiet || git commit -m "📊 Update benchmark results [skip ci]"
-          git push
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "📊 Update benchmark results [skip ci]"
+            # Try to push, skip if it fails due to conflicts
+            if git push; then
+              echo "Push successful"
+            else
+              echo "Push failed, remote may have changed. Skipping."
+            fi
+          fi
 
       - name: Comment on PR with results
         if: github.event_name == 'pull_request'
